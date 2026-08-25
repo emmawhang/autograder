@@ -1,0 +1,85 @@
+{
+  "total_score": 60,
+  "max_score": 100,
+  "breakdown": [
+    {
+      "criterion": "Attempt and notebook completeness",
+      "score": 8,
+      "max_score": 10,
+      "reason": "The submission is non-empty and includes meaningful code toward the Table 3 replication, but has several mistakes."
+    },
+    {
+      "criterion": "Data loading",
+      "score": 10,
+      "max_score": 10,
+      "reason": "Correctly loads the monthly Goyal-Welch data file and handles separator/decimal formatting."
+    },
+    {
+      "criterion": "Date parsing and sample filtering",
+      "score": 8,
+      "max_score": 10,
+      "reason": "Correctly converts yyyymm to dates and sets a date index, but uses slightly wrong start dates for some variables."
+    },
+    {
+      "criterion": "Predictor construction",
+      "score": 12,
+      "max_score": 15,
+      "reason": "Mostly correctly constructs key predictors, but may have minor issues with specific variables."
+    },
+    {
+      "criterion": "Lag handling",
+      "score": 6,
+      "max_score": 10,
+      "reason": "Incorrectly uses a 1-month lag for all predictors, including inflation, which should use a 2-month lag."
+    },
+    {
+      "criterion": "In-sample regression",
+      "score": 8,
+      "max_score": 10,
+      "reason": "Runs OLS regressions of equity premium on lagged predictors, but with some mistakes in the implementation."
+    },
+    {
+      "criterion": "In-sample adjusted R2",
+      "score": 6,
+      "max_score": 10,
+      "reason": "Computes IS_R2_head, but with incorrect parameter count (k=1 instead of 2)."
+    },
+    {
+      "criterion": "Out-of-sample rolling procedure",
+      "score": 4,
+      "max_score": 10,
+      "reason": "Incorrectly uses an expanding window instead of a strict 20-year rolling window and has wrong OOS length (180 instead of 240)."
+    },
+    {
+      "criterion": "Historical mean benchmark",
+      "score": 4,
+      "max_score": 5,
+      "reason": "Correctly compares model forecast errors against the historical mean forecast errors, but with some implementation issues."
+    },
+    {
+      "criterion": "OOS adjusted R2",
+      "score": 2,
+      "max_score": 5,
+      "reason": "Fails to correctly compute OOS_R2_head, reporting plain OOS R2 instead."
+    },
+    {
+      "criterion": "Expected sign restriction",
+      "score": 2,
+      "max_score": 5,
+      "reason": "Applies sign restriction after making prediction, which is incorrect."
+    },
+    {
+      "criterion": "Final Table 3 output",
+      "score": 8,
+      "max_score": 10,
+      "reason": "Produces a final dataframe with predictors as rows and IS_R2_head and OOS_R2_head columns, but with some errors in the values."
+    }
+  ],
+  "final_feedback": "The submission demonstrates a good attempt at replicating Table 3, but has several mistakes in the implementation, including incorrect lag handling, wrong OOS length, and failure to correctly compute OOS_R2_head. The student should review the original notebook and the paper to correct these issues.",
+  "flags_for_manual_review": [
+    "Incorrect lag handling for inflation",
+    "Wrong OOS length (180 instead of 240)",
+    "Failure to correctly compute OOS_R2_head",
+    "Expanding window instead of strict 20-year rolling window"
+  ]
+}

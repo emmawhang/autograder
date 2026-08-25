@@ -1,0 +1,80 @@
+{
+  "total_score": 17,
+  "max_score": 110,
+  "breakdown": [
+    {
+      "criterion": "Attempt and notebook completeness",
+      "score": 8,
+      "max_score": 10,
+      "reason": "Notebook contains work"
+    },
+    {
+      "criterion": "Data loading",
+      "score": 0,
+      "max_score": 10,
+      "reason": "No data loading detected"
+    },
+    {
+      "criterion": "Date parsing and sample filtering",
+      "score": 0,
+      "max_score": 10,
+      "reason": "No date parsing detected"
+    },
+    {
+      "criterion": "Predictor construction",
+      "score": 0,
+      "max_score": 15,
+      "reason": "Found 0/7 canonical predictors"
+    },
+    {
+      "criterion": "Lag handling",
+      "score": 0,
+      "max_score": 10,
+      "reason": "No lagging detected"
+    },
+    {
+      "criterion": "In-sample regression",
+      "score": 0,
+      "max_score": 10,
+      "reason": "No regression code detected"
+    },
+    {
+      "criterion": "In-sample adjusted R2",
+      "score": 0,
+      "max_score": 10,
+      "reason": "No adjusted R2 calculation found"
+    },
+    {
+      "criterion": "Out-of-sample rolling procedure",
+      "score": 0,
+      "max_score": 10,
+      "reason": "No rolling OOS procedure detected"
+    },
+    {
+      "criterion": "Historical mean benchmark",
+      "score": 0,
+      "max_score": 5,
+      "reason": "No mean benchmark detected"
+    },
+    {
+      "criterion": "OOS adjusted R2",
+      "score": 0,
+      "max_score": 5,
+      "reason": "No OOS R2 detected"
+    },
+    {
+      "criterion": "Expected sign restriction",
+      "score": 0,
+      "max_score": 5,
+      "reason": "No expected-sign handling detected"
+    },
+    {
+      "criterion": "Final Table 3 output",
+      "score": 9,
+      "max_score": 10,
+      "reason": "Final dataframe with expected names present"
+    }
+  ],
+  "final_feedback": "Heuristic grading executed. See breakdown for details.",
+  "flags_for_manual_review": []
+}

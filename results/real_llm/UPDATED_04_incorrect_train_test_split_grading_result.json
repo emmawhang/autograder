@@ -1,0 +1,84 @@
+{
+  "total_score": 0,
+  "max_score": 100,
+  "breakdown": [
+    {
+      "criterion": "Attempt and notebook completeness",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Submission does not follow the required structure and does not include meaningful code toward the Table 3 replication."
+    },
+    {
+      "criterion": "Data loading",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Data loading is incorrect, does not match the original assignment."
+    },
+    {
+      "criterion": "Date parsing and sample filtering",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Date parsing and sample filtering are not correctly implemented."
+    },
+    {
+      "criterion": "Predictor construction",
+      "score": 0,
+      "max_score": 15,
+      "reason": "Predictor construction is incomplete and does not match the original assignment."
+    },
+    {
+      "criterion": "Lag handling",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Lag handling is not correctly implemented."
+    },
+    {
+      "criterion": "In-sample regression",
+      "score": 0,
+      "max_score": 10,
+      "reason": "In-sample regression is not correctly implemented."
+    },
+    {
+      "criterion": "In-sample adjusted R2",
+      "score": 0,
+      "max_score": 10,
+      "reason": "In-sample adjusted R2 calculation is incorrect."
+    },
+    {
+      "criterion": "Out-of-sample rolling procedure",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Out-of-sample rolling procedure is not correctly implemented, uses a much shorter OOS window and includes future data."
+    },
+    {
+      "criterion": "Historical mean benchmark",
+      "score": 0,
+      "max_score": 5,
+      "reason": "Historical mean benchmark is not correctly implemented, uses future data."
+    },
+    {
+      "criterion": "OOS adjusted R2",
+      "score": 0,
+      "max_score": 5,
+      "reason": "OOS adjusted R2 calculation is incorrect."
+    },
+    {
+      "criterion": "Expected sign restriction",
+      "score": 0,
+      "max_score": 5,
+      "reason": "Expected sign restriction is not correctly implemented."
+    },
+    {
+      "criterion": "Final Table 3 output",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Final table output is incomplete and does not match the required structure."
+    }
+  ],
+  "final_feedback": "The submission does not follow the required structure and does not include meaningful code toward the Table 3 replication. The data loading, date parsing, and sample filtering are not correctly implemented. The predictor construction, lag handling, in-sample regression, and out-of-sample rolling procedure are also incorrect. The historical mean benchmark and OOS adjusted R2 calculations are not correctly implemented. The expected sign restriction is not correctly applied. The final table output is incomplete and does not match the required structure.",
+  "flags_for_manual_review": [
+    "Look-ahead bias in out-of-sample rolling procedure",
+    "Incorrect historical mean benchmark calculation",
+    "Incorrect OOS adjusted R2 calculation"
+  ]
+}

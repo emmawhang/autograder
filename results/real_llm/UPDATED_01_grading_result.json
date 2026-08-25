@@ -1,0 +1,80 @@
+{
+  "total_score": 95,
+  "max_score": 100,
+  "breakdown": [
+    {
+      "criterion": "Attempt and notebook completeness",
+      "score": 10,
+      "max_score": 10,
+      "reason": "The submission is non-empty and includes meaningful code toward the Table 3 replication."
+    },
+    {
+      "criterion": "Data loading",
+      "score": 10,
+      "max_score": 10,
+      "reason": "The student correctly loads the monthly Goyal-Welch data file and handles separator/decimal formatting if needed."
+    },
+    {
+      "criterion": "Date parsing and sample filtering",
+      "score": 10,
+      "max_score": 10,
+      "reason": "The student correctly converts yyyymm to dates, sets a date index, and uses the intended sample periods."
+    },
+    {
+      "criterion": "Predictor construction",
+      "score": 15,
+      "max_score": 15,
+      "reason": "The student correctly constructs key predictors such as dp, dy, ep, de, e10p, tms, and dfy."
+    },
+    {
+      "criterion": "Lag handling",
+      "score": 10,
+      "max_score": 10,
+      "reason": "The student uses lagged predictors correctly in regression: .shift(1) for most; .shift(2) for 'infl'."
+    },
+    {
+      "criterion": "In-sample regression",
+      "score": 10,
+      "max_score": 10,
+      "reason": "The student runs OLS regressions of equity premium on lagged predictors for each variable."
+    },
+    {
+      "criterion": "In-sample adjusted R2",
+      "score": 10,
+      "max_score": 10,
+      "reason": "The student correctly computes IS_R2_head = R² - (1-R²)*(T-k)/(T-1) and reports in percent."
+    },
+    {
+      "criterion": "Out-of-sample rolling procedure",
+      "score": 10,
+      "max_score": 10,
+      "reason": "The student implements strict 20-year (240-month) rolling window: for each month t, fit model on months [t-240:t], forecast month t+1."
+    },
+    {
+      "criterion": "Historical mean benchmark",
+      "score": 5,
+      "max_score": 5,
+      "reason": "The student correctly compares model forecast errors against historical mean forecast errors."
+    },
+    {
+      "criterion": "OOS adjusted R2",
+      "score": 5,
+      "max_score": 5,
+      "reason": "The student correctly computes OOS_R2_head = 1 - (MSE_model / MSE_mean), then adjusts: R² - (1-R²)*(T-k)/(T-1), in percent."
+    },
+    {
+      "criterion": "Expected sign restriction",
+      "score": 0,
+      "max_score": 5,
+      "reason": "The student does not apply the expected sign restriction correctly."
+    },
+    {
+      "criterion": "Final Table 3 output",
+      "score": 10,
+      "max_score": 10,
+      "reason": "The student produces a dataframe with predictor names as rows (index) and exactly two columns: IS_R2_head, OOS_R2_head."
+    }
+  ],
+  "final_feedback": "The student's submission is mostly correct, but the expected sign restriction is not applied. The student should review the implementation of the expected sign restriction.",
+  "flags_for_manual_review": []
+}

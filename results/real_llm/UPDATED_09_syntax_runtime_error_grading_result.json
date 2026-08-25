@@ -1,0 +1,82 @@
+{
+  "total_score": 0,
+  "max_score": 100,
+  "breakdown": [
+    {
+      "criterion": "Attempt and notebook completeness",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Submission contains a syntax error causing runtime failure."
+    },
+    {
+      "criterion": "Data loading",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Syntax error prevents data loading from being evaluated."
+    },
+    {
+      "criterion": "Date parsing and sample filtering",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Syntax error prevents date parsing and sample filtering from being evaluated."
+    },
+    {
+      "criterion": "Predictor construction",
+      "score": 0,
+      "max_score": 15,
+      "reason": "Syntax error prevents predictor construction from being evaluated."
+    },
+    {
+      "criterion": "Lag handling",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Syntax error prevents lag handling from being evaluated."
+    },
+    {
+      "criterion": "In-sample regression",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Syntax error prevents in-sample regression from being evaluated."
+    },
+    {
+      "criterion": "In-sample adjusted R2",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Syntax error prevents in-sample adjusted R2 calculation from being evaluated."
+    },
+    {
+      "criterion": "Out-of-sample rolling procedure",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Syntax error prevents out-of-sample rolling procedure from being evaluated."
+    },
+    {
+      "criterion": "Historical mean benchmark",
+      "score": 0,
+      "max_score": 5,
+      "reason": "Syntax error prevents historical mean benchmark calculation from being evaluated."
+    },
+    {
+      "criterion": "OOS adjusted R2",
+      "score": 0,
+      "max_score": 5,
+      "reason": "Syntax error prevents OOS adjusted R2 calculation from being evaluated."
+    },
+    {
+      "criterion": "Expected sign restriction",
+      "score": 0,
+      "max_score": 5,
+      "reason": "Syntax error prevents expected sign restriction from being evaluated."
+    },
+    {
+      "criterion": "Final Table 3 output",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Syntax error prevents final table output from being evaluated."
+    }
+  ],
+  "final_feedback": "The submission contains a syntax error that prevents the code from running. Please fix the error and resubmit.",
+  "flags_for_manual_review": [
+    "Syntax error in submission"
+  ]
+}

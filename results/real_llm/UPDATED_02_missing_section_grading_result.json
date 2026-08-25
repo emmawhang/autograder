@@ -1,0 +1,84 @@
+{
+  "total_score": 15,
+  "max_score": 100,
+  "breakdown": [
+    {
+      "criterion": "Attempt and notebook completeness",
+      "score": 10,
+      "max_score": 10,
+      "reason": "Submission is non-empty and includes meaningful code toward the Table 3 replication."
+    },
+    {
+      "criterion": "Data loading",
+      "score": 10,
+      "max_score": 10,
+      "reason": "Correctly loads the monthly Goyal-Welch data file and handles separator/decimal formatting if needed."
+    },
+    {
+      "criterion": "Date parsing and sample filtering",
+      "score": 5,
+      "max_score": 10,
+      "reason": "Partially correct date parsing and sample filtering, but missing key aspects."
+    },
+    {
+      "criterion": "Predictor construction",
+      "score": 5,
+      "max_score": 15,
+      "reason": "Only one predictor ('dp') is correctly constructed."
+    },
+    {
+      "criterion": "Lag handling",
+      "score": 5,
+      "max_score": 10,
+      "reason": "Lag handling is partially correct for 'dp', but missing for other predictors and 'infl'."
+    },
+    {
+      "criterion": "In-sample regression",
+      "score": 5,
+      "max_score": 10,
+      "reason": "In-sample regression is run for one predictor ('dp'), but missing for other predictors."
+    },
+    {
+      "criterion": "In-sample adjusted R2",
+      "score": 5,
+      "max_score": 10,
+      "reason": "In-sample adjusted R2 is computed for one predictor ('dp'), but missing for other predictors and using 'rsquared_adj' instead of manual calculation."
+    },
+    {
+      "criterion": "Out-of-sample rolling procedure",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Out-of-sample rolling procedure is completely missing."
+    },
+    {
+      "criterion": "Historical mean benchmark",
+      "score": 0,
+      "max_score": 5,
+      "reason": "Historical mean benchmark is not computed."
+    },
+    {
+      "criterion": "OOS adjusted R2",
+      "score": 0,
+      "max_score": 5,
+      "reason": "OOS adjusted R2 is not computed."
+    },
+    {
+      "criterion": "Expected sign restriction",
+      "score": 0,
+      "max_score": 5,
+      "reason": "Expected sign restriction is not applied."
+    },
+    {
+      "criterion": "Final Table 3 output",
+      "score": 5,
+      "max_score": 10,
+      "reason": "Final table has correct structure, but only one predictor ('dp') and missing OOS_R2_head."
+    }
+  ],
+  "final_feedback": "The submission is incomplete and missing key aspects of the Table 3 replication, including out-of-sample rolling procedure, historical mean benchmark, and expected sign restriction.",
+  "flags_for_manual_review": [
+    "Out-of-sample rolling procedure is completely missing",
+    "Historical mean benchmark is not computed",
+    "Expected sign restriction is not applied"
+  ]
+}

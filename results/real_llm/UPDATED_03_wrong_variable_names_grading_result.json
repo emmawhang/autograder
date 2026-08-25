@@ -1,0 +1,84 @@
+{
+  "total_score": 20,
+  "max_score": 100,
+  "breakdown": [
+    {
+      "criterion": "Attempt and notebook completeness",
+      "score": 5,
+      "max_score": 10,
+      "reason": "Submission is incomplete and lacks meaningful code toward the Table 3 replication."
+    },
+    {
+      "criterion": "Data loading",
+      "score": 10,
+      "max_score": 10,
+      "reason": "Correctly loads the monthly Goyal-Welch data file."
+    },
+    {
+      "criterion": "Date parsing and sample filtering",
+      "score": 5,
+      "max_score": 10,
+      "reason": "Partially correct date parsing and sample filtering, but lacks proper handling."
+    },
+    {
+      "criterion": "Predictor construction",
+      "score": 0,
+      "max_score": 15,
+      "reason": "Incorrectly constructs key predictors, using different variable names and formulas."
+    },
+    {
+      "criterion": "Lag handling",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Fails to apply correct lagging to predictors, including inflation."
+    },
+    {
+      "criterion": "In-sample regression",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Does not run OLS regressions of equity premium on lagged predictors for each variable."
+    },
+    {
+      "criterion": "In-sample adjusted R2",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Incorrectly computes IS_R2_head, using wrong formula and not reporting in percent."
+    },
+    {
+      "criterion": "Out-of-sample rolling procedure",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Fails to implement strict 20-year rolling window and uses incorrect forecasting procedure."
+    },
+    {
+      "criterion": "Historical mean benchmark",
+      "score": 0,
+      "max_score": 5,
+      "reason": "Does not correctly compare model forecast errors against historical mean forecast errors."
+    },
+    {
+      "criterion": "OOS adjusted R2",
+      "score": 0,
+      "max_score": 5,
+      "reason": "Incorrectly computes OOS_R2_head, using wrong formula and not reporting in percent."
+    },
+    {
+      "criterion": "Expected sign restriction",
+      "score": 0,
+      "max_score": 5,
+      "reason": "Fails to apply sign restriction correctly, if at all."
+    },
+    {
+      "criterion": "Final Table 3 output",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Does not produce dataframe with predictor names as rows and exactly two columns: IS_R2_head and OOS_R2_head."
+    }
+  ],
+  "final_feedback": "The submission lacks completeness and contains significant errors in predictor construction, lag handling, and regression analysis. It fails to implement the out-of-sample rolling procedure and historical mean benchmark correctly. The final output does not meet the required format.",
+  "flags_for_manual_review": [
+    "Inconsistent variable naming",
+    "Lack of proper lag handling",
+    "Incorrect implementation of out-of-sample rolling procedure"
+  ]
+}

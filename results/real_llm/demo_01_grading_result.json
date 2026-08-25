@@ -1,0 +1,67 @@
+{
+  "total_score": 95,
+  "max_score": 100,
+  "breakdown": [
+    {
+      "criterion": "Attempt and notebook completeness",
+      "score": 10,
+      "max_score": 10,
+      "reason": "Submission completed and contains relevant code."
+    },
+    {
+      "criterion": "Data loading",
+      "score": 10,
+      "max_score": 10,
+      "reason": "Data file loaded and parsing handled correctly."
+    },
+    {
+      "criterion": "Date parsing and sample filtering",
+      "score": 10,
+      "max_score": 10,
+      "reason": "Dates converted and sample window applied correctly."
+    },
+    {
+      "criterion": "Predictor construction",
+      "score": 15,
+      "max_score": 15,
+      "reason": "Key predictors constructed with correct lagging."
+    },
+    {
+      "criterion": "Lag handling",
+      "score": 10,
+      "max_score": 10,
+      "reason": "Lagging applied (.shift) as required."
+    },
+    {
+      "criterion": "In-sample adjusted R2",
+      "score": 10,
+      "max_score": 10,
+      "reason": "IS adjusted R² computed and reported in percent."
+    },
+    {
+      "criterion": "Out-of-sample rolling procedure",
+      "score": 10,
+      "max_score": 10,
+      "reason": "240-month rolling OOS implemented correctly."
+    },
+    {
+      "criterion": "OOS adjusted R2",
+      "score": 10,
+      "max_score": 10,
+      "reason": "OOS R² computed using MSE_model / MSE_mean then adjusted."
+    },
+    {
+      "criterion": "Benchmark",
+      "score": 5,
+      "max_score": 5,
+      "reason": "Historical mean used as benchmark."
+    },
+    {
+      "criterion": "Final Table format",
+      "score": 5,
+      "max_score": 10,
+      "reason": "Table produced with expected columns; minor formatting differences."
+    }
+  ],
+  "notes": "This is a mock demo output file created locally for demonstration — run the autograder script to generate real LLM results."
+}

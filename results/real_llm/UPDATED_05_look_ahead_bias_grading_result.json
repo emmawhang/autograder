@@ -1,0 +1,83 @@
+{
+  "total_score": 0,
+  "max_score": 100,
+  "breakdown": [
+    {
+      "criterion": "Attempt and notebook completeness",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Submission contains critical errors and does not follow instructions."
+    },
+    {
+      "criterion": "Data loading",
+      "score": 5,
+      "max_score": 10,
+      "reason": "Data is loaded but used incorrectly due to look-ahead bias."
+    },
+    {
+      "criterion": "Date parsing and sample filtering",
+      "score": 5,
+      "max_score": 10,
+      "reason": "Dates are parsed but sample filtering does not prevent look-ahead bias."
+    },
+    {
+      "criterion": "Predictor construction",
+      "score": 0,
+      "max_score": 15,
+      "reason": "Predictors are not correctly constructed to prevent look-ahead bias."
+    },
+    {
+      "criterion": "Lag handling",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Lag handling is incorrect due to the use of future predictor values."
+    },
+    {
+      "criterion": "In-sample regression",
+      "score": 0,
+      "max_score": 10,
+      "reason": "In-sample regression is not correctly implemented due to look-ahead bias."
+    },
+    {
+      "criterion": "In-sample adjusted R2",
+      "score": 0,
+      "max_score": 10,
+      "reason": "In-sample adjusted R2 calculation is not relevant due to critical errors."
+    },
+    {
+      "criterion": "Out-of-sample rolling procedure",
+      "score": 0,
+      "max_score": 10,
+      "reason": "OOS rolling procedure contains look-ahead bias."
+    },
+    {
+      "criterion": "Historical mean benchmark",
+      "score": 0,
+      "max_score": 5,
+      "reason": "Historical mean benchmark is not correctly used due to look-ahead bias."
+    },
+    {
+      "criterion": "OOS adjusted R2",
+      "score": 0,
+      "max_score": 5,
+      "reason": "OOS adjusted R2 calculation is not relevant due to critical errors."
+    },
+    {
+      "criterion": "Expected sign restriction",
+      "score": 0,
+      "max_score": 5,
+      "reason": "Expected sign restriction is not correctly applied due to look-ahead bias."
+    },
+    {
+      "criterion": "Final Table 3 output",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Final table output is incorrect due to look-ahead bias and other critical errors."
+    }
+  ],
+  "final_feedback": "The submission contains critical errors, most notably look-ahead bias, which severely impacts the validity of the results. It is essential to revisit the implementation, ensuring that only past data is used for predictions and that the methodology aligns with the instructions provided.",
+  "flags_for_manual_review": [
+    "Look-ahead bias in predictor usage",
+    "Incorrect implementation of out-of-sample rolling procedure"
+  ]
+}

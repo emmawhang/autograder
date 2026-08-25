@@ -1,0 +1,84 @@
+{
+  "total_score": 0,
+  "max_score": 100,
+  "breakdown": [
+    {
+      "criterion": "Attempt and notebook completeness",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Submission does not follow the required structure and does not attempt to replicate Table 3."
+    },
+    {
+      "criterion": "Data loading",
+      "score": 5,
+      "max_score": 10,
+      "reason": "Data is loaded but not correctly processed for the replication task."
+    },
+    {
+      "criterion": "Date parsing and sample filtering",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Date parsing is present but sample filtering is not correctly applied for the replication."
+    },
+    {
+      "criterion": "Predictor construction",
+      "score": 0,
+      "max_score": 15,
+      "reason": "Predictors are not correctly constructed in the submission."
+    },
+    {
+      "criterion": "Lag handling",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Lag handling is not correctly implemented in the submission."
+    },
+    {
+      "criterion": "In-sample regression",
+      "score": 0,
+      "max_score": 10,
+      "reason": "In-sample regression is not correctly performed in the submission."
+    },
+    {
+      "criterion": "In-sample adjusted R2",
+      "score": 0,
+      "max_score": 10,
+      "reason": "In-sample adjusted R2 is not correctly calculated in the submission."
+    },
+    {
+      "criterion": "Out-of-sample rolling procedure",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Out-of-sample rolling procedure is not correctly implemented in the submission."
+    },
+    {
+      "criterion": "Historical mean benchmark",
+      "score": 0,
+      "max_score": 5,
+      "reason": "Historical mean benchmark is not correctly used in the submission."
+    },
+    {
+      "criterion": "OOS adjusted R2",
+      "score": 0,
+      "max_score": 5,
+      "reason": "OOS adjusted R2 is not correctly calculated in the submission."
+    },
+    {
+      "criterion": "Expected sign restriction",
+      "score": 0,
+      "max_score": 5,
+      "reason": "Expected sign restriction is not correctly applied in the submission."
+    },
+    {
+      "criterion": "Final Table 3 output",
+      "score": 0,
+      "max_score": 10,
+      "reason": "Final table does not match the required structure and content."
+    }
+  ],
+  "final_feedback": "The submission does not follow the required structure and does not correctly attempt to replicate Table 3. Major issues include incorrect OOS R2 calculation, lack of predictor construction, and incorrect implementation of the out-of-sample rolling procedure.",
+  "flags_for_manual_review": [
+    "Incorrect OOS R2 calculation",
+    "Lack of predictor construction",
+    "Incorrect out-of-sample rolling procedure implementation"
+  ]
+}

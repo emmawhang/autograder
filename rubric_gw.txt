@@ -1,0 +1,74 @@
+{
+  "total_points": 100,
+  "rules": [
+    "Grade based on the GW08 Table 3 two-column replication task.",
+    "Do not require Sharpe ratios, tangency portfolios, industry weights, or portfolio optimization.",
+    "Give partial credit for correct methodology even if final numbers differ slightly (tolerance: ±0.5% for numerical results).",
+    "Small numerical differences are acceptable due to data/date handling or rounding.",
+    "Accept equivalent variable names if logic is correct: e.g., 'epremium' or 'market_premium' for 'equity_premium'; 'log_price_ratio' for 'log(D12)-log(Index)'. Penalize ONLY if mismatch breaks autograder checks.",
+    "CRITICAL: Penalize heavily any look-ahead bias, data leakage, or use of future predictors in forecasting.",
+    "Focus on whether the student correctly constructs the predictors, runs lagged regressions, computes in-sample adjusted R2, computes out-of-sample adjusted R2, and outputs the final two-column table."
+  ],
+  "criteria": [
+    {
+      "name": "Attempt and notebook completeness",
+      "points": 10,
+      "description": "Submission is non-empty and includes meaningful code toward the Table 3 replication."
+    },
+    {
+      "name": "Data loading",
+      "points": 10,
+      "description": "Correctly loads the monthly Goyal-Welch data file and handles separator/decimal formatting if needed."
+    },
+    {
+      "name": "Date parsing and sample filtering",
+      "points": 10,
+      "description": "Correctly converts yyyymm to dates, sets a date index, and uses the intended sample periods."
+    },
+    {
+      "name": "Predictor construction",
+      "points": 15,
+      "description": "Correctly constructs key predictors such as dp, dy, ep, de, e10p, tms, dfy, equity premium, and lagged variables. Accept equivalent formulas (e.g., log(a/b) = log(a)-log(b)). Award 15/15 if ≥5 canonical predictors correct; 10/15 if 3-4 correct; 5/15 if 1-2 correct; 0/15 if none correct or all incorrect."
+    },
+    {
+      "name": "Lag handling",
+      "points": 10,
+      "description": "Uses lagged predictors correctly in regression: .shift(1) for most; .shift(2) for 'infl'. Subtract 5 points if 'infl' uses .shift(1) instead of .shift(2). Award 0/10 if no lagging detected or applied inconsistently."
+    },
+    {
+      "name": "In-sample regression",
+      "points": 10,
+      "description": "Runs OLS regressions of equity premium on lagged predictors for each variable."
+    },
+    {
+      "name": "In-sample adjusted R2",
+      "points": 10,
+      "description": "Correctly computes IS_R2_head = R² - (1-R²)*(T-k)/(T-1) and reports in percent. Award 0/10 if formula uses + instead of -, or if k incorrect. Award 5/10 if plain R² instead of adjusted. Award 0/10 if decimals (0.05) instead of percent (5.0)."
+    },
+    {
+      "name": "Out-of-sample rolling procedure",
+      "points": 10,
+      "description": "Implements strict 20-year (240-month) rolling window: for each month t, fit model on months [t-240:t], forecast month t+1. MUST use only past data (months < t+1) for features and mean benchmark. Deduct 5 if expanding window or <240 months. Deduct 10 if using future data (look-ahead bias)."
+    },
+    {
+      "name": "Historical mean benchmark",
+      "points": 5,
+      "description": "Correctly compares model forecast errors against historical mean forecast errors. Benchmark = mean of equity premiums up to month t (NOT future). Award 0/5 if using median or future data. Award 2/5 if using rolling mean instead of expanding mean."
+    },
+    {
+      "name": "OOS adjusted R2",
+      "points": 5,
+      "description": "Correctly computes OOS_R2_head = 1 - (MSE_model / MSE_mean), then adjusts: R² - (1-R²)*(T-k)/(T-1), in percent. Award 0/5 if using variance or other formula. Award 2/5 if plain OOS R2 without adjustment. OOS R2 can be negative; acceptable."
+    },
+    {
+      "name": "Expected sign restriction",
+      "points": 5,
+      "description": "Apply sign restriction correctly: estimate sign from IS, then during OOS loop, if coefficient changes sign, set to zero BEFORE prediction. Award 0/5 if applied after prediction or to predicted values. Award 3/5 if omitted but acknowledged."
+    },
+    {
+      "name": "Final Table 3 output",
+      "points": 10,
+      "description": "Produces dataframe with predictor names as rows (index) and exactly two columns: IS_R2_head, OOS_R2_head. All values numeric, reported in percent (5.43, not 0.0543). Award 10/10 if correct; 6/10 if correct structure but wrong scale or some NaN; 3/10 if transposed or missing predictors; 0/10 if missing or completely wrong."
+    }
+  ]
+}
