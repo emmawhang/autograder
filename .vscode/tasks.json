@@ -1,0 +1,26 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Autograder Server",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": [
+        "${workspaceFolder}/app.py"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "PORT": "5050"
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    }
+  ]
+}

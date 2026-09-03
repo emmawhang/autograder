@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Autograder Result</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f5f7fb;
+        margin: 0;
+        padding: 40px 20px;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      }
+      h1 { margin-top: 0; }
+      .score-box {
+        background: #eef6ff;
+        padding: 18px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-weight: bold;
+      }
+      .breakdown {
+        margin-top: 16px;
+      }
+      .criterion {
+        border: 1px solid #dfe6f1;
+        border-radius: 8px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .criterion strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+      .flags {
+        margin-top: 18px;
+      }
+      a.button {
+        display: inline-block;
+        margin-top: 18px;
+        text-decoration: none;
+        background: #1f6feb;
+        color: white;
+        padding: 10px 16px;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Autograder Result</h1>
+      <div class="score-box">
+        Score: {{ result['total_score'] }} / {{ result['max_score'] }}
+      </div>
+
+      <h2>Final Feedback</h2>
+      <p>{{ result['final_feedback'] }}</p>
+
+      <div class="breakdown">
+        <h2>Breakdown</h2>
+        {% for item in result['breakdown'] %}
+        <div class="criterion">
+          <strong>{{ item['criterion'] }}</strong>
+          {{ item['score'] }} / {{ item['max_score'] }}
+          <div>{{ item['reason'] }}</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="flags">
+        <h2>Flags for Manual Review</h2>
+        {% if result['flags_for_manual_review'] %}
+          <ul>
+            {% for flag in result['flags_for_manual_review'] %}
+              <li>{{ flag }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>None</p>
+        {% endif %}
+      </div>
+
+      <a href="/" class="button">Grade another file</a>
+    </div>
+  </body>
+</html>

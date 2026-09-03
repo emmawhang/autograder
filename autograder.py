@@ -185,14 +185,12 @@ Grade now and return only JSON.
 
 
 def call_llm(prompt: str) -> str:
-	load_dotenv()
+	load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
 
 	groq_key = os.getenv("GROQ_API_KEY", "").strip()
-	api_key = REDACTED
-		groq_key
-		or os.getenv("OPENAI_API_KEY", "").strip()
-		or os.getenv("GROK_API_KEY", "").strip()
-	)
+	openai_key = os.getenv("OPENAI_API_KEY", "").strip()
+	grok_key = os.getenv("GROK_API_KEY", "").strip()
+	api_key = groq_key or openai_key or grok_key
 	model_name = os.getenv("MODEL_NAME", "").strip()
 
 	base_url = (
@@ -202,17 +200,17 @@ def call_llm(prompt: str) -> str:
 	)
 
 	if groq_key:
-		base_url = "https://api.groq.com/openai/v1"
+		base_url = base_url or "https://api.groq.com/openai/v1"
 	elif not base_url:
 		base_url = "https://api.openai.com/v1"
 
 	if not api_key:
-		REDACTED"Missing API key. Set GROQ_API_KEY or another OpenAI-compatible API key in .env.")
+		raise ValueError("Missing API key. Set GROQ_API_KEY or another OpenAI-compatible API key in .env.")
 
 	if not model_name:
 		raise ValueError("Missing MODEL_NAME in .env.")
 
-	client_kwargs: Dict[str, Any] = {"api_key": REDACTED
+	client_kwargs: Dict[str, Any] = {"api_key": api_key}
 	if base_url:
 		client_kwargs["base_url"] = base_url
 
