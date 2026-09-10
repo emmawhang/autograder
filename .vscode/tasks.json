@@ -6,7 +6,7 @@
       "type": "shell",
       "command": "${workspaceFolder}/.venv/bin/python",
       "args": [
-        "${workspaceFolder}/app.py"
+        "${workspaceFolder}/app/app.py"
       ],
       "options": {
         "cwd": "${workspaceFolder}",

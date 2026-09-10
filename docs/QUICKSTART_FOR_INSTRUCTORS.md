@@ -8,7 +8,7 @@ Your GW08 Table 3 autograder has been enhanced with specific grading rules and a
 ## 1. Distributing to Students
 
 ### Student Template
-**File to distribute:** `GW08_table3_two_cols_student_template.ipynb`
+**File to distribute:** `notebooks/templates/GW08_table3_two_cols_student_template.ipynb`
 
 **What students see:**
 - 5 numbered tasks with clear requirements
@@ -31,10 +31,10 @@ Students complete 5 tasks:
 ### Quick Command
 ```bash
 source .venv/bin/activate
-python autograder.py \
-  --assignment GW08_table3_two_cols.ipynb \
+python app/autograder.py \
+  --assignment notebooks/reference/GW08_table3_two_cols.ipynb \
   --submission student_submission.ipynb \
-  --rubric rubric_gw.txt
+  --rubric config/rubric_gw.txt
 ```
 
 ### Output Files
@@ -43,10 +43,10 @@ python autograder.py \
 
 ### Example
 ```bash
-python autograder.py \
-  --assignment GW08_table3_two_cols.ipynb \
+python app/autograder.py \
+  --assignment notebooks/reference/GW08_table3_two_cols.ipynb \
   --submission student_a_submission.ipynb \
-  --rubric rubric_gw.txt \
+  --rubric config/rubric_gw.txt \
   --json-out results/student_a_grading.json \
   --md-out results/student_a_feedback.md
 ```
@@ -207,9 +207,9 @@ After grading a batch:
 
 ### Updating the Rubric
 If you want to adjust grading:
-1. Edit `rubric_gw.txt` (JSON format)
+1. Edit `config/rubric_gw.txt` (JSON format)
 2. Update the description field with your changes
-3. Re-grade submissions with `python autograder.py ...`
+3. Re-grade submissions with `python app/autograder.py ...`
 
 ### Providing Student Feedback
 Use markdown output: `UPDATED_student_name_feedback.md`
@@ -224,11 +224,11 @@ Use markdown output: `UPDATED_student_name_feedback.md`
 ```
 autograder/
 ├── autograder.py                              ← Main grading script
-├── rubric_gw.txt                              ← Scoring rubric (JSON)
-├── GW08_table3_two_cols.ipynb                 ← Reference solution
-├── GW08_table3_two_cols_student_template.ipynb ← DISTRIBUTE THIS
+├── config/rubric_gw.txt                              ← Scoring rubric (JSON)
+├── notebooks/reference/GW08_table3_two_cols.ipynb                 ← Reference solution
+├── notebooks/templates/GW08_table3_two_cols_student_template.ipynb ← DISTRIBUTE THIS
 ├── GW05_original_monthly.csv                  ← Required data
-├── submission_tests/                          ← Test cases (for validation)
+├── tests/submissions/                          ← Test cases (for validation)
 │   ├── 01_mostly_correct.ipynb
 │   ├── 02_missing_section.ipynb
 │   └── ... (8 more test cases)
@@ -252,7 +252,7 @@ autograder/
 A: No, run autograder once per submission. Use a bash loop for batch grading:
 ```bash
 for notebook in submissions/*.ipynb; do
-  python autograder.py --assignment GW08_table3_two_cols.ipynb --submission "$notebook" --rubric rubric_gw.txt
+  python app/autograder.py --assignment notebooks/reference/GW08_table3_two_cols.ipynb --submission "$notebook" --rubric config/rubric_gw.txt
 done
 ```
 
@@ -260,7 +260,7 @@ done
 A: The rubric strictly requires 240-month rolling window per assignment specs. Different methods will score low on the OOS criterion (0-5/10 depending on reasonableness).
 
 **Q: Can I weight criteria differently?**
-A: Yes, edit `rubric_gw.txt` and change the `points` field for each criterion. Total must equal 100.
+A: Yes, edit `config/rubric_gw.txt` and change the `points` field for each criterion. Total must equal 100.
 
 **Q: Should I show students the rubric?**
 A: Yes! Transparency helps. Show them the 9 CRITICAL RULES so they understand exactly what's graded.
@@ -275,7 +275,7 @@ A: Check the JSON output for reasoning. If you disagree, you can:
 
 ## Summary
 
-✅ **Student template ready** — Distribute `GW08_table3_two_cols_student_template.ipynb`
+✅ **Student template ready** — Distribute `notebooks/templates/GW08_table3_two_cols_student_template.ipynb`
 ✅ **Autograder validated** — Tested on 10 realistic test cases
 ✅ **Rubric explicit** — 12 clear criteria with 9 CRITICAL RULES
 ✅ **Output formats clear** — JSON (records) + Markdown (feedback)

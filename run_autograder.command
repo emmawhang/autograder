@@ -12,4 +12,4 @@ done
 
 export PORT
 open "http://127.0.0.1:$PORT" 2>/dev/null || true
-python app.py
+python app/app.py

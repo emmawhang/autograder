@@ -20,8 +20,9 @@ from autograder import (
 )
 
 BASE_DIR = Path(__file__).resolve().parent
-ASSIGNMENT_NOTEBOOK = BASE_DIR / "GW08_table3_two_cols.ipynb"
-RUBRIC_PATH = BASE_DIR / "rubric_gw.txt"
+PROJECT_ROOT = BASE_DIR.parent
+ASSIGNMENT_NOTEBOOK = PROJECT_ROOT / "notebooks" / "reference" / "GW08_table3_two_cols.ipynb"
+RUBRIC_PATH = PROJECT_ROOT / "config" / "rubric_gw.txt"
 
 app = Flask(__name__)
 ALLOWED_EXTENSIONS = {".ipynb", ".py", ".txt", ".md"}

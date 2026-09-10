@@ -3,7 +3,7 @@
 ## Session Objectives (All Completed ✅)
 
 1. ✅ **Review autograder** — Analyzed autograder.py, rubric, reference solution, sample submissions
-2. ✅ **Create student template** — Built GW08_table3_two_cols_student_template.ipynb with 5 numbered tasks
+2. ✅ **Create student template** — Built notebooks/templates/GW08_table3_two_cols_student_template.ipynb with 5 numbered tasks
 3. ✅ **Generate test cases** — Created 10 diverse test submissions covering realistic mistakes
 4. ✅ **Stress-test autograder** — Ran all submissions through LLM grader; collected baseline scores
 5. ✅ **Identify issues** — Documented 23 edge cases and false positives/negatives
@@ -20,8 +20,8 @@
 
 **Actions:**
 - Reviewed autograder.py structure and dependencies
-- Examined rubric_gw.txt (12 criteria, 100 points)
-- Reviewed reference solution (GW08_table3_two_cols.ipynb)
+- Examined config/rubric_gw.txt (12 criteria, 100 points)
+- Reviewed reference solution (notebooks/reference/GW08_table3_two_cols.ipynb)
 - Analyzed sample submissions (bad=10/100, medium=60/100)
 - Checked .env configuration (Groq API)
 
@@ -40,7 +40,7 @@
 **Goals:** Create clean template for students; generate 10 realistic test cases
 
 **Actions:**
-- Created GW08_table3_two_cols_student_template.ipynb with 5 numbered tasks
+- Created notebooks/templates/GW08_table3_two_cols_student_template.ipynb with 5 numbered tasks
 - Preserved required variable names (data_monthly, df_results, compute_monthly_stats)
 - Created 10 test notebooks covering:
   - Mostly correct (reference)
@@ -134,7 +134,7 @@
 
 **Outcome:**
 - Enhanced autograder.py with 9 specific rules
-- Enhanced rubric_gw.txt with detailed criteria
+- Enhanced config/rubric_gw.txt with detailed criteria
 - Spot-validated improvements:
   - Test 07 (formula error): 20→0/100 ✓ (catches error)
   - Test 01 (good work): 95→95/100 ✓ (maintains fairness)
@@ -313,10 +313,10 @@
 
 ### Core Autograder
 - ✅ autograder.py — Enhanced with 9 CRITICAL RULES
-- ✅ rubric_gw.txt — Updated with specific criteria
+- ✅ config/rubric_gw.txt — Updated with specific criteria
 
 ### Student Materials
-- ✅ GW08_table3_two_cols_student_template.ipynb — Ready for distribution
+- ✅ notebooks/templates/GW08_table3_two_cols_student_template.ipynb — Ready for distribution
 - ✅ Rubric summary (included in QUICKSTART guide)
 
 ### Test Cases

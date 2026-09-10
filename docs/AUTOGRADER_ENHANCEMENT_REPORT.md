@@ -31,7 +31,7 @@ Added **9 CRITICAL RULES** to `build_grading_prompt()` replacing generic guidanc
 8. **Final Table**: Predictor rows, 2 columns (IS_R2_head, OOS_R2_head), percent scale
 9. **Numerical Tolerance**: ±0.5% acceptable variance
 
-### 2. Enhanced Rubric (rubric_gw.txt)
+### 2. Enhanced Rubric (config/rubric_gw.txt)
 
 Updated all 12 criteria with:
 - **Specific formulas** with exact mathematical notation
@@ -199,11 +199,11 @@ Example criterion update:
 ### For Immediate Deployment
 
 1. **Use enhanced autograder**: The updated rubric and CRITICAL RULES are ready for production
-   - Location: `autograder.py` (updated `build_grading_prompt()`) + `rubric_gw.txt` (all 12 criteria updated)
+   - Location: `app/autograder.py` (updated `build_grading_prompt()`) + `config/rubric_gw.txt` (all 12 criteria updated)
    - Status: Validated on 7 of 10 test cases; 4 preliminary cases consistent with old behavior
 
 2. **Distribute student template**: Ready for distribution
-   - Location: `GW08_table3_two_cols_student_template.ipynb`
+   - Location: `notebooks/templates/GW08_table3_two_cols_student_template.ipynb`
    - Status: Clean, numbered, preserves required variable names and structure
 
 3. **Document rubric for students**: Add a rubric overview document
@@ -241,7 +241,7 @@ Example criterion update:
    - Lines modified: ~50 lines of new rule definitions
    - Impact: Major improvement in error detection accuracy
 
-2. **rubric_gw.txt**
+2. **config/rubric_gw.txt**
    - All 12 criteria updated with specific formulas, scoring matrices, penalty amounts
    - Added "critical penalties" to description field (e.g., "Subtract 10 if...")
    - Preserved JSON structure for compatibility
@@ -254,8 +254,8 @@ Example criterion update:
 
 ### Files Created / Unchanged
 
-- ✓ `GW08_table3_two_cols_student_template.ipynb` — Ready for distribution (unchanged)
-- ✓ `submission_tests/` (10 test notebooks) — Unchanged; used for validation
+- ✓ `notebooks/templates/GW08_table3_two_cols_student_template.ipynb` — Ready for distribution (unchanged)
+- ✓ `tests/submissions/` (10 test notebooks) — Unchanged; used for validation
 - ✓ `results/real_llm/` — Contains both old and UPDATED grading outputs for comparison
 
 ---

@@ -10,7 +10,7 @@ Review and improve the GW08 Table 3 autograder to:
 ## Deliverables
 
 ### ✅ 1. Enhanced Student Template
-**File:** `GW08_table3_two_cols_student_template.ipynb`
+**File:** `notebooks/templates/GW08_table3_two_cols_student_template.ipynb`
 
 A clean, numbered template with 5 clear tasks:
 1. **Setup**: Load data, parse dates, apply sample filter
@@ -28,7 +28,7 @@ Features:
 ---
 
 ### ✅ 2. Test Submission Suite
-**Location:** `submission_tests/` (10 notebooks)
+**Location:** `tests/submissions/` (10 notebooks)
 
 Realistic student mistakes for stress-testing:
 
@@ -51,7 +51,7 @@ All notebooks are fully functional (runnable with optional dependencies) and dem
 
 ### ✅ 3. Enhanced Autograder & Rubric
 
-#### A. Autograder Improvements (`autograder.py`)
+#### A. Autograder Improvements (`app/autograder.py`)
 **Enhancement:** Added 9 CRITICAL RULES to `build_grading_prompt()`
 
 These rules provide LLM grader with exact specifications for:
@@ -67,7 +67,7 @@ These rules provide LLM grader with exact specifications for:
 
 **Impact:** Major improvement in catching formula errors, wrong OOS windows, and look-ahead bias
 
-#### B. Rubric Enhancements (`rubric_gw.txt`)
+#### B. Rubric Enhancements (`config/rubric_gw.txt`)
 **Enhancement:** Updated all 12 scoring criteria with specific guidance
 
 Each criterion now includes:
@@ -209,7 +209,7 @@ Re-grading with enhanced rubric on 7 tests:
 ✅ Grading outputs formatted for instructor review
 
 ### Recommended Next Steps
-1. **Distribute student template** (`GW08_table3_two_cols_student_template.ipynb`)
+1. **Distribute student template** (`notebooks/templates/GW08_table3_two_cols_student_template.ipynb`)
    - Include the 9 CRITICAL RULES summary for students
    - Clarify exact formulas and tolerance levels
 
@@ -230,23 +230,23 @@ Re-grading with enhanced rubric on 7 tests:
 ## File Inventory
 
 **Core Files:**
-- ✅ `autograder.py` — Enhanced LLM grader with CRITICAL RULES
-- ✅ `rubric_gw.txt` — Updated 12-criterion rubric
-- ✅ `GW08_table3_two_cols.ipynb` — Reference solution
-- ✅ `GW08_table3_two_cols_student_template.ipynb` — **[READY TO DISTRIBUTE]**
+- ✅ `app/autograder.py` — Enhanced LLM grader with CRITICAL RULES
+- ✅ `config/rubric_gw.txt` — Updated 12-criterion rubric
+- ✅ `notebooks/reference/GW08_table3_two_cols.ipynb` — Reference solution
+- ✅ `notebooks/templates/GW08_table3_two_cols_student_template.ipynb` — **[READY TO DISTRIBUTE]**
 - ✅ `GW05_original_monthly.csv` — Required data
 
 **Test Submissions:**
-- ✅ `submission_tests/01_mostly_correct.ipynb`
-- ✅ `submission_tests/02_missing_section.ipynb`
-- ✅ `submission_tests/03_wrong_variable_names.ipynb`
-- ✅ `submission_tests/04_incorrect_train_test_split.ipynb`
-- ✅ `submission_tests/05_look_ahead_bias.ipynb`
-- ✅ `submission_tests/06_wrong_benchmark.ipynb`
-- ✅ `submission_tests/07_incorrect_oos_r2_calc.ipynb`
-- ✅ `submission_tests/08_runs_but_wrong_interpretation.ipynb`
-- ✅ `submission_tests/09_syntax_runtime_error.ipynb`
-- ✅ `submission_tests/10_vague_markdown_incomplete.ipynb`
+- ✅ `tests/submissions/01_mostly_correct.ipynb`
+- ✅ `tests/submissions/02_missing_section.ipynb`
+- ✅ `tests/submissions/03_wrong_variable_names.ipynb`
+- ✅ `tests/submissions/04_incorrect_train_test_split.ipynb`
+- ✅ `tests/submissions/05_look_ahead_bias.ipynb`
+- ✅ `tests/submissions/06_wrong_benchmark.ipynb`
+- ✅ `tests/submissions/07_incorrect_oos_r2_calc.ipynb`
+- ✅ `tests/submissions/08_runs_but_wrong_interpretation.ipynb`
+- ✅ `tests/submissions/09_syntax_runtime_error.ipynb`
+- ✅ `tests/submissions/10_vague_markdown_incomplete.ipynb`
 
 **Documentation:**
 - ✅ `EDGE_CASES_AND_FALSE_POSITIVES.md` — Risk analysis

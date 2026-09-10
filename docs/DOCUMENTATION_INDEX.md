@@ -50,15 +50,15 @@ This document provides a roadmap to all deliverables and documentation for the e
 ### Core Autograder Files
 ```
 autograder.py                          ← Main grading script (enhanced with 9 CRITICAL RULES)
-rubric_gw.txt                          ← Scoring rubric (12 criteria with specific formulas)
-GW08_table3_two_cols.ipynb             ← Reference solution
-GW08_table3_two_cols_student_template  ← STUDENT TEMPLATE (ready to distribute)
+config/rubric_gw.txt                          ← Scoring rubric (12 criteria with specific formulas)
+notebooks/reference/GW08_table3_two_cols.ipynb             ← Reference solution
+notebooks/templates/GW08_table3_two_cols_student_template.ipynb ← STUDENT TEMPLATE (ready to distribute)
 GW05_original_monthly.csv              ← Required data file
 ```
 
 ### Test Submissions (for validation only)
 ```
-submission_tests/
+tests/submissions/
 ├── 01_mostly_correct.ipynb                   ← Reference good work (95/100)
 ├── 02_missing_section.ipynb                  ← Missing OOS (15-20/100)
 ├── 03_wrong_variable_names.ipynb             ← Non-standard names (20/100)
@@ -96,8 +96,8 @@ DOCUMENTATION_INDEX.md                 ← This file
 
 ### Scenario 1: "I want to grade student submissions"
 1. Read [QUICKSTART_FOR_INSTRUCTORS.md](QUICKSTART_FOR_INSTRUCTORS.md) (5 min)
-2. Distribute `GW08_table3_two_cols_student_template.ipynb` to students
-3. Run autograder: `python autograder.py --submission student.ipynb --rubric rubric_gw.txt`
+2. Distribute `notebooks/templates/GW08_table3_two_cols_student_template.ipynb` to students
+3. Run autograder: `python app/autograder.py --submission student.ipynb --rubric config/rubric_gw.txt`
 4. Review JSON output for detailed scores and reasoning
 5. Share markdown feedback with students
 
@@ -115,14 +115,14 @@ DOCUMENTATION_INDEX.md                 ← This file
 
 ### Scenario 4: "I want to customize the rubric"
 1. Open [QUICKSTART_FOR_INSTRUCTORS.md](QUICKSTART_FOR_INSTRUCTORS.md) Section 7 (Updating Rubric)
-2. Edit `rubric_gw.txt` (JSON format)
+2. Edit `config/rubric_gw.txt` (JSON format)
 3. Re-grade submissions with new rubric
 4. Note: Keep 9 CRITICAL RULES unchanged unless addressing specific issues
 
 ### Scenario 5: "I want to understand the technical approach"
 1. Read [AUTOGRADER_ENHANCEMENT_REPORT.md](AUTOGRADER_ENHANCEMENT_REPORT.md) Part 1 (Enhancements)
 2. Review autograder.py `build_grading_prompt()` to see 9 CRITICAL RULES
-3. Review rubric_gw.txt to see updated criteria
+3. Review config/rubric_gw.txt to see updated criteria
 4. Check test results for validation evidence
 
 ---
@@ -131,7 +131,7 @@ DOCUMENTATION_INDEX.md                 ← This file
 
 ### Deliverables
 - 1 enhanced autograder (autograder.py with 9 CRITICAL RULES)
-- 1 enhanced rubric (rubric_gw.txt with 12 detailed criteria)
+- 1 enhanced rubric (config/rubric_gw.txt with 12 detailed criteria)
 - 1 student template (ready for distribution)
 - 10 test submissions (validation suite)
 - 4 documentation files (guides + analysis)
@@ -176,7 +176,7 @@ DOCUMENTATION_INDEX.md                 ← This file
 
 ## 🎓 What Students Get
 
-**Student Template:** `GW08_table3_two_cols_student_template.ipynb`
+**Student Template:** `notebooks/templates/GW08_table3_two_cols_student_template.ipynb`
 - 5 numbered tasks (Setup → Predictors → IS Regression → Compute Table → Write-up)
 - Clear requirements and expected output format
 - TODO placeholders for code
@@ -278,7 +278,7 @@ DOCUMENTATION_INDEX.md                 ← This file
 
 ### Before First Grading Session
 - [ ] Read QUICKSTART_FOR_INSTRUCTORS.md
-- [ ] Distribute GW08_table3_two_cols_student_template.ipynb to students
+- [ ] Distribute notebooks/templates/GW08_table3_two_cols_student_template.ipynb to students
 - [ ] Brief students on 9 CRITICAL RULES (from QUICKSTART guide)
 - [ ] Confirm .env file has API credentials
 - [ ] Test autograder on one sample submission
@@ -293,15 +293,15 @@ DOCUMENTATION_INDEX.md                 ← This file
 - [ ] Monitor for fairness concerns from students
 - [ ] Check consistency across similar submissions
 - [ ] Document any new error patterns
-- [ ] Adjust rubric if needed (update rubric_gw.txt)
+- [ ] Adjust rubric if needed (update config/rubric_gw.txt)
 
 ---
 
 ## 🔄 Update & Maintenance
 
 **If you want to adjust grading:**
-1. Edit `rubric_gw.txt` (JSON format, modify "points" or "description" fields)
-2. Re-grade submissions: `python autograder.py --submission X --rubric rubric_gw.txt`
+1. Edit `config/rubric_gw.txt` (JSON format, modify "points" or "description" fields)
+2. Re-grade submissions: `python app/autograder.py --submission X --rubric config/rubric_gw.txt`
 3. Compare old vs new scores
 
 **If you discover new edge cases:**

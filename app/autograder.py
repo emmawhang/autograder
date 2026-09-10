@@ -187,7 +187,7 @@ Grade now and return only JSON.
 
 
 def call_llm(prompt: str) -> str:
-	load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
+	load_dotenv(dotenv_path=os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
 
 	provider = os.getenv("LLM_PROVIDER", "").strip().lower()
 	anthropic_key = (os.getenv("ANTHROPIC_API_KEY", "").strip()
@@ -382,7 +382,7 @@ def _build_arg_parser() -> argparse.ArgumentParser:
 	)
 	parser.add_argument(
 		"--assignment",
-		default="GW08_table3_two_cols.ipynb",
+		default="notebooks/reference/GW08_table3_two_cols.ipynb",
 		help="Path to original assignment notebook.",
 	)
 	parser.add_argument(
@@ -392,7 +392,7 @@ def _build_arg_parser() -> argparse.ArgumentParser:
 	)
 	parser.add_argument(
 		"--rubric",
-		default="gw08_rubric.json",
+		default="config/rubric_gw.txt",
 		help="Path to rubric JSON file.",
 	)
 	parser.add_argument(
