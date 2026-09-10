@@ -4,6 +4,7 @@ import os
 from typing import Any, Dict, List
 
 import nbformat
+from anthropic import Anthropic
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -159,6 +160,7 @@ CRITICAL RULES (apply these strictly):
 Output requirements:
 - Return valid JSON only.
 - Do not wrap JSON in markdown fences.
+- Keep each breakdown reason concise (25 words or fewer) and final_feedback under 100 words.
 - Follow this exact shape and field names:
 """
 
@@ -187,11 +189,36 @@ Grade now and return only JSON.
 def call_llm(prompt: str) -> str:
 	load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
 
+	provider = os.getenv("LLM_PROVIDER", "").strip().lower()
+	anthropic_key = (os.getenv("ANTHROPIC_API_KEY", "").strip()
+		or os.getenv("CLAUDE_API_KEY", "").strip())
 	groq_key = os.getenv("GROQ_API_KEY", "").strip()
 	openai_key = os.getenv("OPENAI_API_KEY", "").strip()
 	grok_key = os.getenv("GROK_API_KEY", "").strip()
-	api_key = groq_key or openai_key or grok_key
 	model_name = os.getenv("MODEL_NAME", "").strip()
+
+	if provider == "anthropic" or (not provider and anthropic_key):
+		if not anthropic_key:
+			raise ValueError("LLM_PROVIDER=anthropic requires ANTHROPIC_API_KEY in .env.")
+		if not model_name:
+			model_name = "claude-sonnet-5"
+
+		client = Anthropic(api_key=anthropic_key)
+		response = client.messages.create(
+			model=model_name,
+			max_tokens=int(os.getenv("MAX_TOKENS", "4000")),
+			thinking={"type": "disabled"},
+			system="You are a strict grading assistant. Return valid JSON only, no extra text.",
+			messages=[{"role": "user", "content": prompt}],
+		)
+		content = "".join(
+			block.text for block in response.content if getattr(block, "type", None) == "text"
+		)
+		if not content:
+			raise ValueError("LLM returned empty content.")
+		return content
+
+	api_key = groq_key or openai_key or grok_key
 
 	base_url = (
 		os.getenv("GROQ_BASE_URL", "").strip()
@@ -205,7 +232,7 @@ def call_llm(prompt: str) -> str:
 		base_url = "https://api.openai.com/v1"
 
 	if not api_key:
-		raise ValueError("Missing API key. Set GROQ_API_KEY or another OpenAI-compatible API key in .env.")
+		raise ValueError("Missing API key. Set ANTHROPIC_API_KEY, GROQ_API_KEY, or OPENAI_API_KEY in .env.")
 
 	if not model_name:
 		raise ValueError("Missing MODEL_NAME in .env.")
@@ -273,6 +300,11 @@ def save_json(result: Dict[str, Any], output_path: str) -> None:
 
 
 def save_markdown_feedback(result: Dict[str, Any], output_path: str) -> None:
+	with open(output_path, "w", encoding="utf-8") as file:
+		file.write(markdown_feedback(result))
+
+
+def markdown_feedback(result: Dict[str, Any]) -> str:
 	total_score = result.get("total_score", 0)
 	max_score = result.get("max_score", 100)
 	breakdown = result.get("breakdown", [])
@@ -312,8 +344,7 @@ def save_markdown_feedback(result: Dict[str, Any], output_path: str) -> None:
 	else:
 		lines.append("- None")
 
-	with open(output_path, "w", encoding="utf-8") as file:
-		file.write("\n".join(lines).rstrip() + "\n")
+	return "\n".join(lines).rstrip() + "\n"
 
 
 def run_autograder(

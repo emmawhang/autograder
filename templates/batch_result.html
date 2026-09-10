@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Batch Grading Results</title>
+    <style>
+      :root { --ink: #172033; --muted: #667085; --line: #d9e1ec; --blue: #2457d6; }
+      * { box-sizing: border-box; }
+      body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f3f6fb; color: var(--ink); margin: 0; padding: 38px 18px; }
+      .container { max-width: 1050px; margin: 0 auto; background: white; border: 1px solid var(--line); border-radius: 15px; padding: 30px; box-shadow: 0 18px 50px rgba(35,61,105,.1); }
+      h1 { margin: 0 0 6px; letter-spacing: -.02em; }
+      .muted { color: var(--muted); margin-top: 0; }
+      .actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 24px 0; }
+      a { display: inline-block; text-decoration: none; color: white; background: var(--blue); border-radius: 8px; padding: 11px 16px; font-weight: 650; }
+      a.secondary { color: var(--blue); background: #edf2ff; }
+      .table-wrap { overflow-x: auto; }
+      table { width: 100%; border-collapse: collapse; font-size: 14px; }
+      th, td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+      th { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+      .status { font-weight: 650; }
+      .review { color: #a15c00; }
+      .failed { color: #a12626; }
+      @media (max-width: 620px) { .container { padding: 20px 14px; } }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <h1>Batch grading complete</h1>
+      <p class="muted">Review flagged submissions before posting final grades. The download contains the complete audit package.</p>
+      <div class="actions">
+        <a href="/batch-download/{{ batch_id }}">Download results ZIP</a>
+        <a class="secondary" href="/">Grade another batch</a>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Submission</th><th>Status</th><th>Score</th><th>Manual review</th><th>Flags / error</th></tr></thead>
+          <tbody>
+            {% for row in rows %}
+            <tr>
+              <td>{{ row['student_file'] }}</td>
+              <td class="status {% if row['status'] == 'failed' %}failed{% endif %}">{{ row['status'] }}</td>
+              <td>{% if row['total_score'] != '' %}{{ row['total_score'] }} / {{ row['max_score'] }}{% else %}&mdash;{% endif %}</td>
+              <td class="{% if row['manual_review'] == 'yes' %}review{% endif %}">{{ row['manual_review'] }}</td>
+              <td>{{ row['flags'] or row['error'] or 'None' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>
