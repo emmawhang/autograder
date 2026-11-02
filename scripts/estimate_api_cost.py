@@ -9,7 +9,9 @@ from statistics import mean
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "app"))
 
-from autograder import build_grading_prompt, extract_notebook_content, load_rubric
+from autograder import load_rubric
+from grading import build_grading_prompt
+from notebook_parser import extract_notebook_content
 from dotenv import load_dotenv
 
 
@@ -38,7 +40,7 @@ def money(value: float) -> str:
 def build_report(root: Path, chars_per_token: float, output_tokens: int,
                  input_price: float, output_price: float) -> str:
     load_dotenv(root / ".env")
-    assignment = extract_notebook_content(str(root / "notebooks" / "reference" / "GW08_table3_two_cols.ipynb"))["prompt_text"]
+    key_content = extract_notebook_content(str(root / "notebooks" / "reference" / "GW08_table3_two_cols.ipynb"))
     rubric = load_rubric(str(root / "config" / "rubric_gw.txt"))
     system_prompt = "You are a strict grading assistant. Return valid JSON only, no extra text."
     submission_paths = sample_submission_paths(root)
@@ -50,7 +52,7 @@ def build_report(root: Path, chars_per_token: float, output_tokens: int,
     for path in submission_paths:
         submission = extract_notebook_content(str(path))["prompt_text"]
         submission_char_counts.append(len(submission))
-        prompt = build_grading_prompt(assignment, submission, rubric)
+        prompt = build_grading_prompt(key_content, {"prompt_text": submission}, rubric)
         prompts.append(system_prompt + prompt)
 
     input_tokens = round(mean(estimate_tokens(prompt, chars_per_token) for prompt in prompts))
@@ -88,7 +90,7 @@ def build_report(root: Path, chars_per_token: float, output_tokens: int,
         "",
         f"- One successful `POST /grade` request makes one application-level call to `chat.completions.create`; there are no application retry loops or multi-turn calls.",
         f"- Input tokens are estimated as `round(characters / {chars_per_token:g})`, including the strict system prompt and the constructed user prompt. The estimate averages {len(prompts)} notebook sample(s): `tests/submissions/*.ipynb` when present.",
-        f"- The sampled student payload averages {mean(submission_char_counts):,.0f} characters; the prompt also includes the full assignment ({len(assignment):,} characters), rubric JSON, grading rules, and extracted cell outputs. Actual usage varies with code, markdown, and output length.",
+        f"- The sampled student payload averages {mean(submission_char_counts):,.0f} characters; the prompt also includes the full key ({len(key_content['prompt_text']):,} characters), optional rubric JSON, and extracted cell outputs. Actual usage varies with code, markdown, and output length.",
         f"- Output is modeled at {output_tokens:,} tokens for JSON grading breakdown plus final feedback. The code does not set `max_tokens`; measure `usage.completion_tokens` in production for billing accuracy.",
         f"- Pricing defaults to OpenAI `gpt-4o-mini` standard rates of `${input_price:.2f}/1M` input and `${output_price:.2f}/1M` output tokens (see [OpenAI API pricing](https://openai.com/api/pricing/)). Override with `INPUT_PRICE_PER_MILLION`, `OUTPUT_PRICE_PER_MILLION`, and `OUTPUT_TOKENS` if using another provider/model.",
         "- The OpenAI SDK can retry some transient failures internally. This report excludes failed/retried requests; multiply by the observed request-attempt factor if provider logs show retries. A failed request may still be billable depending on provider behavior.",

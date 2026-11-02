@@ -1,41 +1,76 @@
-# autograder
+# ML in Finance Notebook Autograder
 
-This repository contains the GW08 autograder and related grading artifacts, feedback samples, and result outputs.
+This project grades student notebooks against an instructor-provided answer-key notebook. The key is the primary reference: its questions, solution code, explanations, outputs, grading criteria, and point allocations are included in the Claude prompt.
 
-## LLM provider configuration
+## Workflow
 
-The grader supports Claude through Anthropic's API as well as the existing OpenAI-compatible providers. Put the provider key in a local `.env` file; do not commit that file.
+1. Start the Flask app:
 
-For Claude:
+   ```bash
+   source .venv/bin/activate
+   python app/app.py
+   ```
+
+2. Open `http://localhost:5050`.
+3. Upload an instructor key notebook with either a single student notebook or a ZIP of submissions.
+4. Review question-level scores, deductions, feedback, and manual-review flags.
+5. Download the batch ZIP when grading a class.
+
+The bundled GW08 key is used only as a CLI default. New assignments should provide a new key notebook at runtime.
+
+## Key notebook requirements
+
+The parser recognizes ordinary Markdown headings, question/task headings, code cells, outputs, and explanatory text. For authoritative scores, include explicit criteria and point allocations, for example:
+
+```markdown
+## Question 1 — Predictor construction — 15 points
+
+### Grading criteria
+- 5 points: ...
+- 10 points: ...
+```
+
+If the key has no explicit criteria or points, the grader flags the report for instructor review and does not silently invent authoritative weights. An optional supplemental JSON rubric can be supplied through the CLI.
+
+## CLI
+
+```bash
+PYTHONPATH=app python app/autograder.py \
+  --key path/to/instructor_key.ipynb \
+  --submission path/to/student_submission.ipynb \
+  --rubric config/rubric_gw.txt \
+  --json-out grading_outputs/student.json \
+  --md-out grading_outputs/student.md
+```
+
+`--assignment` remains an alias for `--key` for compatibility with older scripts.
+
+## Project structure
+
+```text
+app/
+  app.py                 Flask routes and upload handling
+  notebook_parser.py     Notebook validation and cell extraction
+  reference_extractor.py Key criteria and point extraction
+  grading.py             Prompt construction, provider calls, and report formatting
+  autograder.py          CLI compatibility wrapper
+  templates/             Web pages
+config/
+  rubric_gw.txt          Optional supplemental GW08 rubric
+notebooks/
+  reference/             Reusable instructor/reference notebooks
+  templates/             Student distribution templates
+```
+
+## Configuration and security
+
+Store provider credentials only in the ignored local `.env` file. Supported providers include Anthropic and OpenAI-compatible endpoints:
 
 ```dotenv
 LLM_PROVIDER=anthropic
-ANTHROPIC_API_KEY=your-anthropic-key
+ANTHROPIC_API_KEY=your-key
 MODEL_NAME=claude-sonnet-5
 MAX_TOKENS=4000
 ```
 
-`LLM_PROVIDER=anthropic` is optional when `ANTHROPIC_API_KEY` is the only provider key present. This grader's prompts are about 4,000 input tokens plus a short JSON response, so context size is not a concern. Thinking is disabled for this task because the grader requires a compact JSON response, not a hidden reasoning trace. Sonnet is recommended because the rubric requires nuanced judgments about code indexing, look-ahead bias, rolling windows, and formulas; Haiku is faster but more likely to miss those distinctions. A Claude API key normally works only if it is active, has API credits or billing access, and the selected model is available to that account. A Claude.ai subscription or promotional credit is not automatically the same as Anthropic API credit; confirm the key's API billing/credits in the Anthropic Console.
-
-## Contents
-- `app/app.py` — Flask web application and batch endpoints
-- `app/autograder.py` — main grading logic and CLI
-- `config/rubric_gw.txt` — rubric used for evaluation
-- `notebooks/reference/` — instructor/reference notebooks
-- `notebooks/templates/` — student notebook template
-- `tests/submissions/` — grading test submissions
-- `scripts/estimate_api_cost.py` — token-cost estimator
-- `docs/` — project documentation and implementation notes
-- `results/` — grading outputs and sample LLM feedback
-
-## Run locally
-
-```bash
-source .venv/bin/activate
-python app/app.py
-```
-
-Then open `http://localhost:5050`. Keep API credentials in the local, ignored `.env` file.
-
-## Notes
-This project captures the current autograder progress and result snapshots for the ML in Finance assignment workflow.
+Student submissions and generated reports are ignored by Git. Uploaded files are processed in temporary directories and are not retained by the application.

@@ -6,3 +6,8 @@ venv/
 .DS_Store
 *.log
 .env
+student_submissions/
+grading_outputs/
+reports/
+results/
+tests/

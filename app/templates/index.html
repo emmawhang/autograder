@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>GW08 Autograder</title>
+    <title>Notebook Autograder</title>
     <style>
       :root { --ink: #172033; --muted: #667085; --line: #d9e1ec; --blue: #2457d6; --blue-dark: #173b99; }
       * { box-sizing: border-box; }
@@ -71,23 +71,34 @@
   </head>
   <body>
     <div class="container">
-      <h1>GW08 Autograder</h1>
-      <p class="lede">Grade one submission or process an entire class ZIP. Results include rubric scores, feedback, and a manual-review report.</p>
+      <h1>Notebook Autograder</h1>
+      <p class="lede">Upload an instructor answer key, then grade one submission or an entire class ZIP.</p>
 
       {% if error %}
       <div class="error">{{ error }}</div>
       {% endif %}
 
+      <div class="key-form">
+        <h2>Instructor answer key</h2>
+        <p>The key notebook is the primary grading reference. Explicit criteria and point allocations are required for authoritative scores.</p>
+        {% if default_key %}<p class="muted">Default key available: {{ default_key }}</p>{% endif %}
+        <p class="muted">Each grading form below accepts a key upload. The bundled default key is used by the CLI.</p>
+      </div>
+
       <div class="forms">
         <form method="POST" action="/grade" enctype="multipart/form-data">
           <h2>Single submission</h2>
           <p>Upload one notebook or source file for an immediate result.</p>
+          <input type="file" name="key_file" accept=".ipynb">
+          <input type="text" name="key_path" placeholder="Or local key .ipynb path">
           <input type="file" name="student_file" accept=".ipynb,.py,.txt,.md" required>
           <button type="submit">Grade submission</button>
         </form>
         <form method="POST" action="/batch-grade" enctype="multipart/form-data">
           <h2>Class batch</h2>
           <p>Upload a ZIP containing student notebooks. Maximum 200 submissions.</p>
+          <input type="file" name="key_file" accept=".ipynb">
+          <input type="text" name="key_path" placeholder="Or local key .ipynb path">
           <input type="file" name="batch_file" accept=".zip" required>
           <button type="submit">Grade class ZIP</button>
         </form>
