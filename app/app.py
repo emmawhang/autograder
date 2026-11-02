@@ -15,11 +15,19 @@ from typing import Any, Dict, Iterator
 from flask import Flask, render_template, request, send_file
 from werkzeug.utils import secure_filename
 
-from grading import attach_reference_flags, build_grading_prompt, call_llm, markdown_feedback, parse_llm_json
+from grading import (
+	attach_reference_flags,
+	build_grading_prompt,
+	call_llm,
+	markdown_feedback,
+	parse_llm_json,
+	plain_text_feedback,
+)
 from notebook_parser import NotebookParseError, extract_notebook_content
 from autograder import load_rubric
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PROBLEM_SETS_ROOT = PROJECT_ROOT / "problem_sets"
 DEFAULT_KEY = PROJECT_ROOT / "notebooks" / "reference" / "GW08_table3_two_cols.ipynb"
 DEFAULT_RUBRIC = PROJECT_ROOT / "config" / "rubric_gw.txt"
 ALLOWED_EXTENSIONS = {".ipynb", ".py", ".txt", ".md"}
@@ -68,6 +76,126 @@ def _key_path_from_request() -> tuple[str, bool]:
 	raise ValueError("Upload or select an instructor key notebook before grading.")
 
 
+def _problem_set_path(name: str) -> Path:
+	candidate = (PROBLEM_SETS_ROOT / name).resolve()
+	if PROBLEM_SETS_ROOT.resolve() not in candidate.parents or not candidate.is_dir():
+		raise ValueError("Unknown problem set. Choose a directory under problem_sets/.")
+	return candidate
+
+
+def _folder_key(problem_set: Path) -> Path:
+	keys = sorted(
+		path for path in problem_set.glob("*_key.ipynb")
+		if path.is_file() and path.resolve().parent == problem_set.resolve()
+	)
+	if len(keys) != 1:
+		raise ValueError(
+			f"{problem_set.name} must contain exactly one *_key.ipynb file; found {len(keys)}."
+		)
+	return keys[0]
+
+
+def _folder_submissions(problem_set: Path) -> Path:
+	path = problem_set / "submissions"
+	path.mkdir(exist_ok=True)
+	return path
+
+
+def _folder_results(problem_set: Path) -> Path:
+	path = problem_set / "results"
+	path.mkdir(exist_ok=True)
+	return path
+
+
+def _grade_folder(problem_set_name: str) -> list[dict]:
+	problem_set = _problem_set_path(problem_set_name)
+	key_content = extract_notebook_content(str(_folder_key(problem_set)))
+	rubric = load_rubric(str(DEFAULT_RUBRIC)) if DEFAULT_RUBRIC.is_file() else None
+	submissions = sorted(
+		path for path in _folder_submissions(problem_set).iterdir()
+		if path.is_file() and path.suffix.lower() in ALLOWED_EXTENSIONS
+	)
+	if not submissions:
+		raise ValueError(f"No supported submissions found in {problem_set}/submissions/.")
+
+	results_dir = _folder_results(problem_set)
+	rows: list[dict] = []
+	for path in submissions:
+		try:
+			result = _grade_file(path, path.name, key_content, rubric)
+			stem = secure_filename(path.stem) or "submission"
+			(results_dir / f"{stem}.json").write_text(
+				json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8"
+			)
+			(results_dir / f"{stem}.md").write_text(markdown_feedback(result), encoding="utf-8")
+			feedback_text = plain_text_feedback(result)
+			(results_dir / f"{stem}.txt").write_text(feedback_text, encoding="utf-8")
+			flags = result.get("flags_for_manual_review") or []
+			rows.append({
+				"student_file": path.name,
+				"status": "graded",
+				"total_score": result.get("total_score", ""),
+				"max_score": result.get("max_score", 0),
+				"manual_review": "yes" if flags else "no",
+				"flags": " | ".join(map(str, flags)),
+				"error": "",
+				"feedback": feedback_text,
+				"result": result,
+			})
+		except Exception as exc:
+			rows.append({
+				"student_file": path.name,
+				"status": "failed",
+				"total_score": "",
+				"max_score": "",
+				"manual_review": "yes",
+				"flags": "grading error",
+				"error": provider_error(exc),
+				"feedback": provider_error(exc),
+				"result": {},
+			})
+
+	(results_dir / "grades.csv").write_text(
+		_csv_text(rows), encoding="utf-8"
+	)
+	return rows
+
+
+def _csv_text(rows: list[dict]) -> str:
+	buffer = io.StringIO()
+	question_names = []
+	for row in rows:
+		for item in (row.get("result") or {}).get("question_scores", []) or (row.get("result") or {}).get("breakdown", []):
+			name = str(item.get("question", item.get("criterion", "Question")))
+			if name not in question_names:
+				question_names.append(name)
+	fields = ["student_identifier", "total_score", "max_score"] + question_names + ["full_feedback", "status", "manual_review", "flags", "error"]
+	writer = csv.DictWriter(
+		buffer,
+		fieldnames=fields,
+		extrasaction="ignore",
+	)
+	writer.writeheader()
+	for row in rows:
+		result = row.get("result") or {}
+		scores = {}
+		for item in result.get("question_scores", []) or result.get("breakdown", []):
+			name = str(item.get("question", item.get("criterion", "Question")))
+			scores[name] = f"{item.get('score', 0)}/{item.get('max_score', 0)}"
+		writer.writerow({
+			"student_identifier": row.get("student_file", ""),
+			"total_score": row.get("total_score", ""),
+			"max_score": row.get("max_score", ""),
+			**scores,
+			"full_feedback": row.get("feedback", row.get("error", "")),
+			"status": row.get("status", ""),
+			"manual_review": row.get("manual_review", ""),
+			"flags": row.get("flags", ""),
+			"error": row.get("error", ""),
+		})
+	return buffer.getvalue()
+
+
 def _grade_file(path: Path, filename: str, key_content: Dict[str, Any], rubric: Dict[str, Any] | None) -> dict:
 	if path.suffix.lower() == ".ipynb":
 		submission = extract_notebook_content(str(path))
@@ -91,22 +219,139 @@ def _valid_zip_members(archive: zipfile.ZipFile) -> Iterator[zipfile.ZipInfo]:
 
 
 def _batch_zip(rows: list[dict], feedback_files: list[tuple[str, str]]) -> bytes:
-	grades = io.StringIO()
-	writer = csv.DictWriter(grades, fieldnames=["student_file", "status", "total_score", "max_score", "manual_review", "flags", "error"])
-	writer.writeheader()
-	for row in rows:
-		writer.writerow({field: row.get(field, "") for field in writer.fieldnames})
+	grades = _csv_text(rows)
 	output = io.BytesIO()
 	with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as archive:
-		archive.writestr("grades.csv", grades.getvalue())
+		archive.writestr("grades.csv", grades)
 		for filename, content in feedback_files:
 			archive.writestr(filename, content)
 	return output.getvalue()
 
 
+def _brightspace_feedback_zip(
+	archive: zipfile.ZipFile,
+	key_content: Dict[str, Any],
+	rubric: Dict[str, Any] | None,
+	results_dir: Path,
+) -> tuple[bytes, list[dict]]:
+	"""Grade a downloaded Brightspace ZIP and preserve every original path."""
+	output = io.BytesIO()
+	rows: list[dict] = []
+	feedback_by_folder: dict[str, str] = {}
+	with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as destination:
+		members = [
+			member for member in _valid_zip_members(archive)
+			if Path(member.filename).suffix.lower() == ".ipynb"
+		]
+		if not members:
+			raise ValueError("Brightspace ZIP contains no supported submissions.")
+		for member in archive.infolist():
+			if member.is_dir():
+				destination.writestr(member, b"")
+				continue
+			data = archive.read(member)
+			destination.writestr(member, data)
+		for member in members:
+			filename = Path(member.filename).name
+			file_descriptor, temp_name = tempfile.mkstemp(suffix=Path(filename).suffix)
+			os.close(file_descriptor)
+			temp_path = Path(temp_name)
+			try:
+				temp_path.write_bytes(archive.read(member))
+				result = _grade_file(temp_path, filename, key_content, rubric)
+				feedback = plain_text_feedback(result)
+				folder = str(Path(member.filename).parent)
+				feedback_by_folder[folder] = feedback
+				flags = result.get("flags_for_manual_review") or []
+				rows.append({
+					"student_file": filename,
+					"status": "graded",
+					"total_score": result.get("total_score", ""),
+					"max_score": result.get("max_score", 0),
+					"manual_review": "yes" if flags else "no",
+					"flags": " | ".join(map(str, flags)),
+					"error": "",
+					"feedback": feedback,
+					"result": result,
+				})
+				stem = secure_filename(Path(filename).stem) or "submission"
+				(results_dir / f"{stem}.txt").write_text(feedback, encoding="utf-8")
+				(results_dir / f"{stem}.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
+			except Exception as exc:
+				rows.append({
+					"student_file": filename,
+					"status": "failed",
+					"total_score": "",
+					"max_score": "",
+					"manual_review": "yes",
+					"flags": "grading error",
+					"error": provider_error(exc),
+					"feedback": provider_error(exc),
+					"result": {},
+				})
+			finally:
+				temp_path.unlink(missing_ok=True)
+		for folder, feedback in feedback_by_folder.items():
+			target = f"{folder}/grading_feedback.txt" if folder != "." else "grading_feedback.txt"
+			destination.writestr(target, feedback)
+	return output.getvalue(), rows
+
+
 @app.route("/", methods=["GET"])
 def index():
-	return render_template("index.html", default_key=str(DEFAULT_KEY) if DEFAULT_KEY.is_file() else "")
+	problem_sets = sorted(
+		path.name for path in PROBLEM_SETS_ROOT.iterdir()
+		if path.is_dir() and not path.name.startswith(".")
+	) if PROBLEM_SETS_ROOT.is_dir() else []
+	return render_template(
+		"index.html",
+		default_key=str(DEFAULT_KEY) if DEFAULT_KEY.is_file() else "",
+		problem_sets=problem_sets,
+	)
+
+
+@app.route("/folder-grade", methods=["POST"])
+def folder_grade():
+	problem_set = request.form.get("problem_set", "").strip()
+	if not problem_set:
+		return render_template("index.html", error="Choose a problem set folder first."), 400
+	try:
+		rows = _grade_folder(problem_set)
+		return render_template("batch_result.html", rows=rows, batch_id=None, problem_set=problem_set)
+	except Exception as exc:
+		return render_template("index.html", error=provider_error(exc)), 400
+
+
+@app.route("/brightspace-grade", methods=["POST"])
+def brightspace_grade():
+	problem_set_name = request.form.get("problem_set", "").strip()
+	uploaded = request.files.get("brightspace_file")
+	if not problem_set_name or uploaded is None or not uploaded.filename:
+		return render_template("index.html", error="Choose a problem set and Brightspace ZIP."), 400
+	if Path(uploaded.filename).suffix.lower() != ".zip":
+		return render_template("index.html", error="Brightspace upload must be a .zip file."), 400
+	try:
+		problem_set = _problem_set_path(problem_set_name)
+		key_content = extract_notebook_content(str(_folder_key(problem_set)))
+		rubric = load_rubric(str(DEFAULT_RUBRIC)) if DEFAULT_RUBRIC.is_file() else None
+		zip_path = _write_upload(uploaded, ".zip")
+		try:
+			with zipfile.ZipFile(zip_path) as archive:
+				brightspace_zip, rows = _brightspace_feedback_zip(
+					archive, key_content, rubric, _folder_results(problem_set)
+				)
+		finally:
+			os.unlink(zip_path)
+		(problem_set / "results" / "brightspace_grades.csv").write_text(
+			_csv_text(rows), encoding="utf-8"
+		)
+		download_id = uuid.uuid4().hex
+		BATCH_RESULTS[download_id] = brightspace_zip
+		return render_template(
+			"batch_result.html", rows=rows, batch_id=download_id, problem_set=problem_set_name
+		)
+	except Exception as exc:
+		return render_template("index.html", error=provider_error(exc)), 400
 
 
 @app.route("/grade", methods=["POST"])
@@ -168,15 +413,18 @@ def batch_grade():
 				try:
 					result = _grade_file(path, filename, key_content, rubric)
 					flags = result.get("flags_for_manual_review") or []
+					feedback = plain_text_feedback(result)
 					rows.append({"student_file": filename, "status": "graded", "total_score": result.get("total_score", ""),
 						"max_score": result.get("max_score", 0), "manual_review": "yes" if flags else "no",
-						"flags": " | ".join(map(str, flags)), "error": ""})
+						"flags": " | ".join(map(str, flags)), "error": "", "feedback": feedback, "result": result})
 					stem = Path(filename).stem
 					feedback_files.extend([(f"feedback/{stem}.json", json.dumps(result, indent=2)),
-						(f"feedback/{stem}.md", markdown_feedback(result))])
+						(f"feedback/{stem}.md", markdown_feedback(result)),
+						(f"feedback/{stem}.txt", feedback)])
 				except Exception as exc:
 					rows.append({"student_file": filename, "status": "failed", "total_score": "", "max_score": "",
-						"manual_review": "yes", "flags": "grading error", "error": provider_error(exc)})
+						"manual_review": "yes", "flags": "grading error", "error": provider_error(exc),
+						"feedback": provider_error(exc), "result": {}})
 		batch_id = uuid.uuid4().hex
 		BATCH_RESULTS[batch_id] = _batch_zip(rows, feedback_files)
 		return render_template("batch_result.html", rows=rows, batch_id=batch_id)

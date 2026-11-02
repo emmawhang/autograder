@@ -11,3 +11,7 @@ grading_outputs/
 reports/
 results/
 tests/
+problem_sets/*/submissions/*
+problem_sets/*/results/*
+!problem_sets/*/submissions/.gitkeep
+!problem_sets/*/results/.gitkeep

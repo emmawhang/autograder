@@ -27,14 +27,16 @@
   <body>
     <main class="container">
       <h1>Batch grading complete</h1>
-      <p class="muted">Review flagged submissions before posting final grades. The download contains the complete audit package.</p>
+      <p class="muted">Review flagged submissions before posting final grades. Plain-text feedback is ready to copy into Brightspace.</p>
       <div class="actions">
-        <a href="/batch-download/{{ batch_id }}">Download results ZIP</a>
+        {% if batch_id %}<a href="/batch-download/{{ batch_id }}">Download results ZIP</a>{% endif %}
         <a class="secondary" href="/">Grade another batch</a>
       </div>
+      <label for="student-search">Search students</label>
+      <input id="student-search" type="search" placeholder="Type a filename or score">
       <div class="table-wrap">
-        <table>
-          <thead><tr><th>Submission</th><th>Status</th><th>Score</th><th>Manual review</th><th>Flags / error</th></tr></thead>
+        <table id="results-table">
+          <thead>          <tr><th>Submission</th><th>Status</th><th>Score</th><th>Manual review</th><th>Flags / error</th><th>Feedback</th></tr></thead>
           <tbody>
             {% for row in rows %}
             <tr>
@@ -43,11 +45,32 @@
               <td>{% if row['total_score'] != '' %}{{ row['total_score'] }} / {{ row['max_score'] }}{% else %}&mdash;{% endif %}</td>
               <td class="{% if row['manual_review'] == 'yes' %}review{% endif %}">{{ row['manual_review'] }}</td>
               <td>{{ row['flags'] or row['error'] or 'None' }}</td>
+              <td>
+                <button type="button" class="copy-feedback" data-feedback="{{ row['feedback']|e }}">Copy feedback</button>
+                <details><summary>Preview</summary><pre>{{ row['feedback'] }}</pre></details>
+              </td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
     </main>
+    <script>
+      const search = document.getElementById('student-search');
+      search.addEventListener('input', () => {
+        const query = search.value.toLowerCase();
+        document.querySelectorAll('#results-table tbody tr').forEach((row) => {
+          row.hidden = !row.textContent.toLowerCase().includes(query);
+        });
+      });
+      document.querySelectorAll('.copy-feedback').forEach((button) => {
+        button.addEventListener('click', async () => {
+          await navigator.clipboard.writeText(button.dataset.feedback);
+          const label = button.textContent;
+          button.textContent = 'Copied';
+          setTimeout(() => { button.textContent = label; }, 1200);
+        });
+      });
+    </script>
   </body>
 </html>

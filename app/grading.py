@@ -159,3 +159,30 @@ def markdown_feedback(result: Dict[str, Any]) -> str:
 		"## Flags For Manual Review", ""])
 	lines.extend(f"- {flag}" for flag in result.get("flags_for_manual_review", []) or ["None"])
 	return "\n".join(lines).rstrip() + "\n"
+
+
+def plain_text_feedback(result: Dict[str, Any]) -> str:
+	"""Create concise feedback suitable for Brightspace Overall Feedback."""
+	lines = [
+		f"Score: {result.get('total_score', 0)}/{result.get('max_score', 0)}",
+		"",
+		"Question-level results:",
+	]
+	items = result.get("question_scores") or result.get("breakdown", [])
+	for item in items:
+		name = item.get("question", item.get("criterion", "Question"))
+		score = item.get("score", 0)
+		max_score = item.get("max_score", 0)
+		lines.append(f"- {name}: {score}/{max_score}")
+		deductions = item.get("deductions") or []
+		if deductions:
+			lines.extend(f"  Deduction: {deduction}" for deduction in deductions)
+		explanation = item.get("feedback", item.get("reason", "")).strip()
+		if explanation:
+			lines.append(f"  Explanation: {explanation}")
+	lines.extend(["", "Overall feedback:", result.get("final_feedback", "No feedback provided.")])
+	flags = result.get("flags_for_manual_review") or []
+	if flags:
+		lines.extend(["", "Instructor review flags:"])
+		lines.extend(f"- {flag}" for flag in flags)
+	return "\n".join(lines).strip() + "\n"

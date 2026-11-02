@@ -18,6 +18,36 @@ This project grades student notebooks against an instructor-provided answer-key 
 
 The bundled GW08 key is used only as a CLI default. New assignments should provide a new key notebook at runtime.
 
+## Problem-set folders and Brightspace feedback
+
+Each problem set can be graded from a stable folder:
+
+```text
+problem_sets/ps1/
+  ps1_key.ipynb
+  submissions/
+  results/
+```
+
+Place a few notebooks in `submissions/` while testing, then use **Grade problem-set folder**. The `results/` folder receives:
+
+- `grades.csv` with student identifiers, total scores, question-level scores, and complete plain-text feedback
+- One `.txt` feedback file per student for Brightspace's Overall Feedback field
+- JSON audit files and optional Markdown feedback
+
+For a Brightspace download, use **Brightspace feedback ZIP** and select the problem set. The app preserves the original ZIP paths and submission filenames and adds `grading_feedback.txt` inside each student's original folder. Review the generated ZIP before uploading it with Brightspace's **Add Feedback Files** workflow. Brightspace requires downloaded submission files and their identifying folder/file names to remain unchanged.
+
+The equivalent endpoint is:
+
+```bash
+curl -X POST \
+  -F problem_set=ps1 \
+  -F brightspace_file=@brightspace_download.zip \
+  http://127.0.0.1:5050/brightspace-grade
+```
+
+Brightspace documentation: [Evaluate assignments using the Assignments tool](https://community.d2l.com/brightspace/kb/articles/3529-evaluate-assignments-using-the-assignments-tool).
+
 ## Key notebook requirements
 
 The parser recognizes ordinary Markdown headings, question/task headings, code cells, outputs, and explanatory text. For authoritative scores, include explicit criteria and point allocations, for example:

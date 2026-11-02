@@ -86,6 +86,29 @@
       </div>
 
       <div class="forms">
+        <form method="POST" action="/folder-grade">
+          <h2>Grade problem-set folder</h2>
+          <p>Place the key in <code>problem_sets/&lt;set&gt;/</code> and 2–3 student notebooks in its <code>submissions/</code> folder.</p>
+          <select name="problem_set" required>
+            <option value="">Choose a problem set</option>
+            {% for problem_set in problem_sets %}
+            <option value="{{ problem_set }}">{{ problem_set }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit">Grade folder submissions</button>
+        </form>
+        <form method="POST" action="/brightspace-grade" enctype="multipart/form-data">
+          <h2>Brightspace feedback ZIP</h2>
+          <p>Upload Brightspace's downloaded submissions ZIP. Original paths are preserved and each student folder receives <code>grading_feedback.txt</code>.</p>
+          <select name="problem_set" required>
+            <option value="">Choose a problem set</option>
+            {% for problem_set in problem_sets %}
+            <option value="{{ problem_set }}">{{ problem_set }}</option>
+            {% endfor %}
+          </select>
+          <input type="file" name="brightspace_file" accept=".zip" required>
+          <button type="submit">Create Brightspace feedback ZIP</button>
+        </form>
         <form method="POST" action="/grade" enctype="multipart/form-data">
           <h2>Single submission</h2>
           <p>Upload one notebook or source file for an immediate result.</p>

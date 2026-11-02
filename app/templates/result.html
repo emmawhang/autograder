@@ -62,6 +62,8 @@
       </div>
 
       <h2>Final Feedback</h2>
+      <button type="button" id="copy-feedback">Copy plain-text feedback</button>
+      <pre id="feedback-text"></pre>
       <p>{{ result['final_feedback'] }}</p>
 
       <div class="breakdown">
@@ -90,5 +92,21 @@
 
       <a href="/" class="button">Grade another file</a>
     </div>
+    <script>
+      const feedback = {{ result|tojson }};
+      const items = feedback.question_scores || feedback.breakdown || [];
+      const lines = [`Score: ${feedback.total_score}/${feedback.max_score}`, '', 'Question-level results:'];
+      items.forEach((item) => {
+        lines.push(`- ${item.question || item.criterion}: ${item.score}/${item.max_score}`);
+        lines.push(`  Explanation: ${item.feedback || item.reason || ''}`);
+      });
+      lines.push('', 'Overall feedback:', feedback.final_feedback || '');
+      const text = lines.join('\n');
+      document.getElementById('feedback-text').textContent = text;
+      document.getElementById('copy-feedback').addEventListener('click', async () => {
+        await navigator.clipboard.writeText(text);
+        document.getElementById('copy-feedback').textContent = 'Copied';
+      });
+    </script>
   </body>
 </html>
