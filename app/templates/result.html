@@ -75,6 +75,20 @@
           <div>{{ item['reason'] }}</div>
         </div>
         {% endfor %}
+        {% for question in result.get('question_scores', []) %}
+        <div class="criterion">
+          <strong>{{ question['question'] }}</strong>
+          {{ question['score'] }} / {{ question['max_score'] }}
+          {% for subquestion in question['subquestions'] %}
+          <div>
+            <strong>{{ subquestion['label'] }} — {{ subquestion['score'] }} / {{ subquestion['max_score'] }}</strong>
+            <div>Earned: {{ subquestion['earned_reason'] }}</div>
+            {% if subquestion['deduction_reason'] %}<div>Points lost: {{ subquestion['deduction_reason'] }}</div>{% endif %}
+          </div>
+          {% endfor %}
+          <div>{{ question['feedback'] }}</div>
+        </div>
+        {% endfor %}
       </div>
 
       <div class="flags">
@@ -98,6 +112,11 @@
       const lines = [`Score: ${feedback.total_score}/${feedback.max_score}`, '', 'Question-level results:'];
       items.forEach((item) => {
         lines.push(`- ${item.question || item.criterion}: ${item.score}/${item.max_score}`);
+        (item.subquestions || []).forEach((subquestion) => {
+          lines.push(`  ${subquestion.label}: ${subquestion.score}/${subquestion.max_score}`);
+          lines.push(`    Earned: ${subquestion.earned_reason}`);
+          if (subquestion.deduction_reason) lines.push(`    Points lost: ${subquestion.deduction_reason}`);
+        });
         lines.push(`  Explanation: ${item.feedback || item.reason || ''}`);
       });
       lines.push('', 'Overall feedback:', feedback.final_feedback || '');

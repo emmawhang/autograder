@@ -169,6 +169,10 @@ def _csv_text(rows: list[dict]) -> str:
 			name = str(item.get("question", item.get("criterion", "Question")))
 			if name not in question_names:
 				question_names.append(name)
+			for subquestion in item.get("subquestions", []):
+				sub_name = f"{name} {subquestion['label']}"
+				if sub_name not in question_names:
+					question_names.append(sub_name)
 	fields = ["student_identifier", "total_score", "max_score"] + question_names + ["full_feedback", "status", "manual_review", "flags", "error"]
 	writer = csv.DictWriter(
 		buffer,
@@ -182,6 +186,10 @@ def _csv_text(rows: list[dict]) -> str:
 		for item in result.get("question_scores", []) or result.get("breakdown", []):
 			name = str(item.get("question", item.get("criterion", "Question")))
 			scores[name] = f"{item.get('score', 0)}/{item.get('max_score', 0)}"
+			for subquestion in item.get("subquestions", []):
+				scores[f"{name} {subquestion['label']}"] = (
+					f"{subquestion['score']}/{subquestion['max_score']}"
+				)
 		writer.writerow({
 			"student_identifier": row.get("student_file", ""),
 			"total_score": row.get("total_score", ""),

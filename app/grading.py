@@ -21,7 +21,15 @@ REQUIRED_OUTPUT_SCHEMA: Dict[str, Any] = {
 			"question": "string",
 			"score": 0,
 			"max_score": 0,
-			"deductions": ["string"],
+			"subquestions": [
+				{
+					"label": "a)",
+					"score": 0,
+					"max_score": 0,
+					"earned_reason": "string",
+					"deduction_reason": "string",
+				}
+			],
 			"feedback": "string",
 		}
 	],
@@ -45,8 +53,14 @@ Accept equivalent correct methods, formulas, variable names, and explanations wh
 the key's intended result. Award partial credit only for demonstrated progress. Do not invent
 point allocations: if the key lacks points, flag the question for instructor review and use
 max_score 0 for that question unless an explicitly supplied supplemental rubric provides it.
-Do not treat code comments alone as evidence that an implementation works. Explain every
-deduction concisely. Return valid JSON only, with no markdown fences.
+Do not treat code comments alone as evidence that an implementation works. Return valid JSON
+only, with no markdown fences. Every question must be broken down into every identifiable
+subquestion or rubric item, including labels such as a), b), c), (i), and (ii). Do not combine
+subquestions into one score. For EVERY subquestion report earned points, maximum points,
+an earned_reason explaining why the points were awarded, and a deduction_reason explaining
+each point or partial point not awarded. Use an empty deduction_reason only when full credit
+was earned. The sum of subquestion scores must equal the parent question score, and the sum
+of parent question scores must equal total_score.
 
 OUTPUT SCHEMA:
 {json.dumps(REQUIRED_OUTPUT_SCHEMA, indent=2)}
@@ -129,6 +143,43 @@ def parse_llm_json(response: str) -> Dict[str, Any]:
 		raise ValueError(f"LLM JSON is missing required keys: {sorted(missing)}")
 	if not isinstance(parsed["breakdown"], list):
 		raise ValueError("LLM JSON field 'breakdown' must be a list.")
+	questions = parsed.get("question_scores", [])
+	if not isinstance(questions, list) or not questions:
+		raise ValueError("LLM JSON field 'question_scores' must be a list.")
+	question_total = 0.0
+	question_max_total = 0.0
+	for question in questions:
+		subquestions = question.get("subquestions")
+		if not isinstance(subquestions, list) or not subquestions:
+			raise ValueError(
+				f"Question '{question.get('question', 'unknown')}' must include subquestions."
+			)
+		sub_total = 0.0
+		for subquestion in subquestions:
+			required_subquestion = {"label", "score", "max_score", "earned_reason", "deduction_reason"}
+			missing_subquestion = required_subquestion - set(subquestion)
+			if missing_subquestion:
+				raise ValueError(
+					f"Subquestion '{subquestion.get('label', 'unknown')}' is missing "
+					f"{sorted(missing_subquestion)}."
+				)
+			score = float(subquestion["score"])
+			max_score = float(subquestion["max_score"])
+			if score < 0 or max_score < 0 or score > max_score:
+				raise ValueError(f"Invalid score for subquestion '{subquestion['label']}'.")
+			sub_total += score
+		question_score = float(question.get("score", 0))
+		question_max = float(question.get("max_score", 0))
+		if abs(sub_total - question_score) > 1e-6:
+			raise ValueError(f"Subquestion scores do not add up for '{question.get('question', 'unknown')}'.")
+		if question_score < 0 or question_max < 0 or question_score > question_max:
+			raise ValueError(f"Invalid score for question '{question.get('question', 'unknown')}'.")
+		question_total += question_score
+		question_max_total += question_max
+	if abs(question_total - float(parsed["total_score"])) > 1e-6:
+		raise ValueError("Question scores do not add up to total_score.")
+	if abs(question_max_total - float(parsed["max_score"])) > 1e-6:
+		raise ValueError("Question max scores do not add up to max_score.")
 	return parsed
 
 
@@ -152,6 +203,13 @@ def markdown_feedback(result: Dict[str, Any]) -> str:
 	for item in result.get("question_scores") or result.get("breakdown", []):
 		lines.append(f"- **{item.get('question', item.get('criterion', 'Unknown'))}**: "
 			+ f"{item.get('score', 0)}/{item.get('max_score', 0)}")
+		for subquestion in item.get("subquestions", []):
+			lines.append(
+				f"  - {subquestion['label']}: {subquestion['score']}/{subquestion['max_score']} "
+				f"— {subquestion['earned_reason']}"
+			)
+			if subquestion["deduction_reason"]:
+				lines.append(f"    - Deduction: {subquestion['deduction_reason']}")
 		feedback = item.get("feedback", item.get("reason", ""))
 		if feedback:
 			lines.append(f"  - {feedback}")
@@ -174,6 +232,13 @@ def plain_text_feedback(result: Dict[str, Any]) -> str:
 		score = item.get("score", 0)
 		max_score = item.get("max_score", 0)
 		lines.append(f"- {name}: {score}/{max_score}")
+		for subquestion in item.get("subquestions", []):
+			lines.append(
+				f"  {subquestion['label']}: {subquestion['score']}/{subquestion['max_score']} "
+				f"— Earned: {subquestion['earned_reason']}"
+			)
+			if subquestion["deduction_reason"]:
+				lines.append(f"    Lost points: {subquestion['deduction_reason']}")
 		deductions = item.get("deductions") or []
 		if deductions:
 			lines.extend(f"  Deduction: {deduction}" for deduction in deductions)
